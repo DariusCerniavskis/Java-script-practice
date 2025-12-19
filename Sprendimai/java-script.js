@@ -1,6 +1,6 @@
 
 // const taskNumber = Number(prompt(`Task number?`,8));
-const taskNumber=8;
+const taskNumber=11;
 // Task1
 if (taskNumber===1){
 
@@ -80,7 +80,7 @@ if (taskNumber===1){
 
     }
     
-    const randomExpense={};
+ 
     const constantTitles=[
         "food",
         "course",
@@ -111,8 +111,104 @@ if (taskNumber===1){
 
     console.log(`My 10 random expenses are:`);
     console.log(myExpenses);
-}
 
+
+
+// Task9  
+}else if(taskNumber===9){
+    const getAreaLenght =(gettingArea)=>{
+          return gettingArea.length;
+
+    };
+    
+ 
+    const myArea=[
+        "food",
+        "course",
+        "Christmas gifts",
+        "communal fees",
+        "school"
+    ];
+ 
+ 
+    myAreaLenght=getAreaLenght(myArea);
+   
+
+ 
+    console.log(`My area`)
+    console.log(myArea);
+    console.log(`My area lenght is: ${myAreaLenght}`);
+
+// Task10  
+}else if(taskNumber===10){
+
+ 
+    const drawLinesDependsOnAreaLenght =(gettingArea)=>{
+        for(let i=0;i<gettingArea.length-1;i++) 
+            console.log(i + ".  "+"#".repeat(10));         
+  
+
+    };
+    
+ 
+    const myArea=[
+        "food",
+        "course",
+        "Christmas gifts",
+        "communal fees",
+        "school"
+    ];
+ 
+ 
+    drawLinesDependsOnAreaLenght(myArea);
+   
+
+ 
+    console.log(`Task is done.`);
+
+  
+
+
+// Task11  
+}else if(taskNumber===11){
+
+ 
+    const getMiddleAreaElement =(gettingArea)=>{
+        const middleElementNumber =Math.round((gettingArea.length-1)/2)
+
+        return gettingArea[middleElementNumber]
+
+    };
+    
+ 
+    const myArea=[
+        "food",
+        "course",
+        "Christmas gifts",
+        "communal fees",
+        // "school"
+    ];
+ 
+ 
+    const middleAreaElement=  getMiddleAreaElement(myArea);
+   
+
+    console.log(`My area`)
+    console.log(myArea);
+    console.log(`My area middle element is: ${middleAreaElement}`);
+
+
+  
+
+
+
+
+
+
+
+
+};
+  
 
 
 
