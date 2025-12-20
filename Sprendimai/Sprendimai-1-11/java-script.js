@@ -1,6 +1,5 @@
 
-// const taskNumber = Number(prompt(`Task number?`,8));
-const taskNumber=11;
+const taskNumber = Number(prompt(`Task number?`,11));
 // Task1
 if (taskNumber===1){
 
@@ -170,8 +169,7 @@ if (taskNumber===1){
 
 
 // Task11  
-}else if(taskNumber===11){
-
+} else {
  
     const getMiddleAreaElement =(gettingArea)=>{
         const middleElementNumber =Math.round((gettingArea.length-1)/2)
@@ -186,7 +184,7 @@ if (taskNumber===1){
         "course",
         "Christmas gifts",
         "communal fees",
-        // "school"
+        "school"
     ];
  
  
@@ -197,19 +195,7 @@ if (taskNumber===1){
     console.log(myArea);
     console.log(`My area middle element is: ${middleAreaElement}`);
 
-
+}; 
   
-
-
-
-
-
-
-
-
-};
-  
-
-
 
 
