@@ -4560,4 +4560,19 @@ for(let i=0;i<cars.length;i++)
    
     
   
+}else if(taskNumber==7){
+  alertName = (text)=> {
+    alert(text)
+  }
+
+  consoleName =(text) => {
+    console.log(text)
+  }
+
+  coreFunction=(name, callback)=> {
+    const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    callback(capitalizedName)
+  }
+
+  coreFunction("peTras", alertName)
 };

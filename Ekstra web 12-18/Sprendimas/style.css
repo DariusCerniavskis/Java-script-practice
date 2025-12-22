@@ -16,9 +16,11 @@
 
     /* images sizes and corners radius */
     --big-img-size: 700px;
+    --gallerie-img-size: 900px;
     --intro-img-size: ;
     --feedback-img-size: ;
     --stories-img-size: ;
+    --arrow-size: 3rem;
 
     /* font size for navigation elements */
     --nav-font-size: 1.2rem;
@@ -46,14 +48,16 @@ h1 h2 h3 h4 h5 h6 button {
 }
 
 h1 {
-    font-size: 8vw; /* font size depend on screel width*/
+    font-size: 8vw;
+    /* font size depend on screel width*/
     font-weight: 100;
     line-height: 1;
     letter-spacing: -4px;
 }
 
 h2 {
-    font-size: 6vw; /* font size depend on screel width*/
+    font-size: 6vw;
+    /* font size depend on screel width*/
     font-weight: 100;
     line-height: 1;
     letter-spacing: -2px;
@@ -109,13 +113,25 @@ button:hover {
     background-color: var(--site-light-red-color);
 }
 
-.circle-btn {
-    background-color: var(--site-light-red-color);
+.arrow-in-cicrle {
+
+    /* background-color: var(--site-light-red-color); */
 }
 
-.circle-btn:hover {
-    background-color: var(--site-red-color);
+.arrow-in-cicrle img {
+    height: var(--arrow-size);
+    opacity: 0.8;
 }
+
+.right-arrow img {
+    rotate: 180deg;
+}
+
+.arrow-in-cicrle:hover {
+    /* background-color: var(--site-red-color); */
+}
+
+
 
 ul {
     list-style: none;
@@ -138,9 +154,7 @@ li a {
     height: var(--nav-font-size);
 }
 
-.right-arrow img {
-    rotate: 180deg;
-}
+
 
 /*************************************************************************************************/
 /*                              P A G E    S T Y L E S                                           */
@@ -155,6 +169,7 @@ body {
     background-color: var(--bgr-color);
 }
 
+/* Header */
 .header-wrapper {
     width: 100%;
     height: var(--big-img-size);
@@ -211,6 +226,7 @@ body {
     height: 4rem;
 }
 
+/* main page*/
 .main-section-wrapper h1 {
     text-align: center;
 
@@ -266,6 +282,7 @@ body {
     color: var(--site-red-color);
 }
 
+/* hero */
 .hero-wrapper {
     display: flex;
 
@@ -285,7 +302,8 @@ body {
     background-color: yellow;
 }
 
-.intro-head {
+/* info */
+.info-head {
     padding-bottom: var(--section-spacing);
 
     background-color: blueviolet;
@@ -302,6 +320,7 @@ body {
     color: black;
 }
 
+/* hero */
 .hero-img-wrapper {
     width: 135%;
 
@@ -363,4 +382,124 @@ body {
 .main-text-wrapper a {
     padding-top: var(--main-spacing);
     color: var(--site-red-color);
+}
+
+/* gallerie */
+.gallery-wrapper {
+    height: var(--gallerie-img-size);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+
+
+    background-image: url(./assest/images/gallery/gal-img0.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    /* background-color: greenyellow; */
+}
+
+.gallery-wrapper img {
+
+
+    color: var(--site-light-red-color);
+}
+
+.right-gallerie-nav-button:click {
+    /* next background image */
+}
+
+.left-gallerie-nav-button:click {
+    /* next background image */
+}
+
+/* feedback */
+.feedback-and-nav-wrapper {
+    height: 550px;
+
+
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+
+    background-color: var(--bgr-color);
+}
+
+.feedback-wrapper {
+    height: 550px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    padding: var(--section-spacing) var(--main-spacing);
+
+    background-color: var(--bgr-color);
+}
+
+.feedback-box {
+    padding-right: var(--vertical-gap);
+
+    background-color: coral;
+}
+
+.feedback-text-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5rem;
+
+    padding-left: 1rem;
+    padding-right: 4rem;
+}
+
+.feedback-text-box h5 {
+    text-align: center;
+    letter-spacing: -2px;
+    color: var(--site-red-color);
+}
+
+.feedback-text-box p {
+
+    text-align: center;
+    font-size: 1.2rem;
+    letter-spacing: -2px;
+
+}
+
+.fb-pg0 {
+    display: none;
+}
+
+.fb-pg1 {
+    display: none;
+}
+
+.fb-pg2 {
+    display: none;
+}
+
+.fb-pg3 {
+    display: none;
+}
+
+.fb-pg4 {
+    display: flex;
+}
+
+.fb-pg5 {
+    display: flex;
+}
+
+.feedback-nav-wraper {
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: bottom;
+    gap: var(--main-spacing);
+
+    background-color: aquamarine;
 }
