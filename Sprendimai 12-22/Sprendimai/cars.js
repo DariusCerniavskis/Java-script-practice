@@ -4470,7 +4470,7 @@ const cars = [
 
 
 
-taskNumber=Number(prompt("Task number?",1));
+taskNumber=Number(prompt("Task number?",4));
 
 if (taskNumber==0){
 // 0. Parašyti komanda kuri atvaizduos tiek kartu tekstą "CAR" 
@@ -4494,12 +4494,41 @@ for(let i=0;i<cars.length;i++)
     return !car.Miles_per_Gallon;
   });
 
-  console.log(`car consumption miles per galon`)
+  console.log(`cars consumption are miles per galon`)
   console.log(carsMilesPerGallon);
 
   console.log(" ");
-  console.log(`car consumption kilometers per liter`);
+  console.log(`cars consumption are kilometers per liter`);
   console.log(carsNotMilesPerGallon);
+
+} else if(taskNumber==3){
+  //3. Parašyti komandą kuri gražins automobilius, 
+  // kurie turi parametrą 8 "Cylinders" ir 
+  // "Miles_per_Gallon" parametras didesnis arba lygus 15.
+
+  const carsMilesPerGallonAndCylinders=cars.filter((car)=>{
+    return car.Cylinders==8 &&   car.Miles_per_Gallon>=15;
+  });
+
+  console.log(`cars have 8 cylinders and consumption more or equal 15 miles per galon`)
+  console.log(carsMilesPerGallonAndCylinders);
+
+
+
+} else if(taskNumber==4){
+  //4.  Parašyti komandą kuri gražins automobilius su pridėtu papildomu lauku
+  // ojekte, kuris vadinasi "Kilowatts", 
+  // jis yra lygus "Horsepower" * 0.7457;
+
+
+  const carsWithKilowats=cars.map((car)=>{
+    return {
+      ...car,
+      Kilowatts:Number((Math.round(car.Horsepower * 745.7)/1000).toFixed(3))
+    };
+  });
+
+  console.log(`cars with kilowats`)
+  console.log(carsWithKilowats);
+
 }
-
-
