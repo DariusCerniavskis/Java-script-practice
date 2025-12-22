@@ -4480,7 +4480,7 @@ for(let i=0;i<cars.length;i++)
   console.log(`car ${i}`)
   
 ;
-} else if (taskNumber=1 || taskNumber=2){
+} else if (taskNumber==1 || taskNumber==2){
   // 1. Parašyti komandą kuri gražins automobilius, 
   // kurie turi parametrą "Miles_per_Gallon" ;
   // 2. Parašyti komandą kuri gražins automobilius,
