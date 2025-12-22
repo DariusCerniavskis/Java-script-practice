@@ -4470,7 +4470,7 @@ const cars = [
 
 
 
-taskNumber=Number(prompt("Task number?",4));
+taskNumber=Number(prompt("Task number?",6));
 
 if (taskNumber==0){
 // 0. Parašyti komanda kuri atvaizduos tiek kartu tekstą "CAR" 
@@ -4531,4 +4531,33 @@ for(let i=0;i<cars.length;i++)
   console.log(`cars with kilowats`)
   console.log(carsWithKilowats);
 
-}
+} else if(taskNumber==5){
+  //5. Parašyti komandą kuri gražins true arba false reikšmę 
+  // tikrinant ar visi automobiliai yra pagaminti "USA".
+
+
+  const isAllCarsMadeInUSA=cars.every((car)=>{
+    return car.Origin=="USA"
+  });
+
+  if (isAllCarsMadeInUSA){
+    console.log(`All cars are made in USA`);
+  }else{
+       console.log(`Not all cars are made in USA`);
+  }
+
+} else if(taskNumber==6){
+  //6. Para6yti fn, kuri atvaizduoja kiekvieno automobilio 
+  // esančio masyve modelį;
+
+
+  console.log(`car names are:`)
+  const carNames=cars.forEach(car => {
+    console.log(car.Name)
+  });
+
+ console.log(carNames);
+   
+    
+  
+};
