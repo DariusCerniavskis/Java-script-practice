@@ -21,3 +21,11 @@
 .delete-btn {
     background-color: red;
 }
+
+#warning {
+    color: brown;
+}
+
+#goodInfo {
+    color: green;
+}
