@@ -1,12 +1,8 @@
 const isValid = (dataType, inputData, minLenght) => {
-    // console.log(`reiksme${inputData}`);
-    // console.log(!inputData);
-    // console.log(inputData.lenght < minLenght);
     if (!inputData || inputData.lenght < minLenght) {
         console.log(`Invalid ${dataType}. Please try again.`);
         return false;
     }
-    console.log(`Value is: ${inputData} `);
     return true;
 };
 
@@ -14,8 +10,11 @@ const inputName = document.getElementById("userName");
 const inputEmail = document.getElementById("userEmail");
 const inputPassword = document.getElementById("userPassword");
 const btnSubmit = document.getElementById("submit");
+const btnDelete = document.getElementById("delete");
+const fieldMessage = document.getElementById("message");
 
 const userData = [];
+let deleteConfirmation = false;
 
 btnSubmit.addEventListener("click", () => {
     if (
@@ -29,6 +28,7 @@ btnSubmit.addEventListener("click", () => {
             userPassword: inputPassword.value,
         };
         userData.push(user);
+        console.log(userData);
     }
 
     // console.log(inputName.value);
