@@ -1,0 +1,10 @@
+TASKS:
+1. Sukurti formą kurioje bus Userio vardas, email, bei password;
+2. Paspaudus mygtuką input duomenys turi būt atspauzdinti consolėj;
+3. Pridėt validaciją, kad consolėj būtu atspauzdintas user objektas tik jei visos reikšmės yra ne tuščios. Kitu atvėju consolėje turi atsirast informacija, kad tam tikras inputas yra tuščias;
+4. Pridėt funkcionalumą, kad informacija būtu atspauzdinta consolej;
+5. Sukurti masyvą į kurį pridedamas sėkmingai sukurtas user;
+6. Pridėjus user - mastyvas turi būt atvaizduotas;
+7. Pridėti dar vieną mygtuką kuri paspaudus iš masyvo būtu ištrintas paskutinis elementas;
+8. Pakeisti password validacija, password turi turėt bent 8 simbolius;
+9. Kiekvienam naujai sukurtaim useriui sugeneruoti bei priejo objekto pridėti nuolaidą (discount), kuri siekia nuo 1 iki 40;
