@@ -392,6 +392,14 @@ body {
     color: var(--site-light-red-color);
 }
 
+.right-gallerie-nav-button:click {
+    /* next background image */
+}
+
+.left-gallerie-nav-button:click {
+    /* next background image */
+}
+
 /* feedback */
 .feedback-and-nav-wrapper {
     height: 550px;
@@ -438,6 +446,30 @@ body {
     font-size: 1.2rem;
     letter-spacing: -2px;
 }
+
+/* .fb-pg0 {
+    display: flex;
+}
+
+.fb-pg1 {
+    display: flex;
+}
+
+.fb-pg2 {
+    display: none;
+}
+
+.fb-pg3 {
+    display: none;
+}
+
+.fb-pg4 {
+    display: none;
+}
+
+.fb-pg5 {
+    display: none;
+} */
 
 .feedback-nav-wraper {
     height: 20%;
