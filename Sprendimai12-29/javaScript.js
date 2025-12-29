@@ -1,4 +1,4 @@
-const taskNumber = 14;
+const taskNumber = prompt("Task numbewr (max - 15)?", 15);
 
 if (taskNumber < 6) {
     // 1. Atspauzdinti ekrane teksto "Sveiki!, cia 12 paskaita." ilgį;
@@ -93,10 +93,11 @@ if (taskNumber < 6) {
 
     const hiddenNumber = hidePhoneNumber(phrase13);
     console.log(`${phrase13} convert to ${hiddenNumber}`);
-} else if (taskNumber == 14) {
+} else if (taskNumber == 14 || taskNumber == 15) {
     // 14. Parašyti funkciją kuriai yra paduodamas masyvas su uždraustais žodžiais ir pats
     // tekstas. For ciklo pagalba tekstas turi būt iteruojamas su kiekvienu raktažodžiu
     //  bei taip visi uždrausti žodžiai paversti "***".
+
     const getNumberInWords = (number, digitsWords) => {
         const numberInString = String(number);
         const digits = numberInString.split("");
@@ -108,16 +109,58 @@ if (taskNumber < 6) {
         return numbersInWords.trimEnd();
     };
 
-    const getCorrectPhrase = (badPhrase, forbiddenWords) => {
-        let goodPhrase = badPhrase;
+    const getCorrectPhrase = (getPhrase, forbiddenWords, taskNumber) => {
+        let goodPhrase = getPhrase;
         let stars2 = "";
+        let isForbidden = false;
+
+        // --------------------------------------------------------------------------
         forbiddenWords.forEach((forbiddenWord) => {
-            stars2 = "*".repeat(forbiddenWord.length);
-            goodPhrase = goodPhrase.replaceAll(forbiddenWord, stars2);
+            if (!!goodPhrase) {
+                isForbidden = goodPhrase.includes(forbiddenWord);
+                if (isForbidden) {
+                    if (taskNumber == 15) {
+                        // Iwant to exit function o0r from for Each,
+                        // but reality - got to the next turn!!!
+                        // flag for next empty loops
+                        goodPhrase = false;
+                        return;
+                    } else {
+                        stars2 = "*".repeat(forbiddenWord.length);
+                        // Task 14
+                        goodPhrase = goodPhrase.replaceAll(
+                            forbiddenWord,
+                            stars2
+                        );
+                    }
+                }
+            }
         });
+        // -------------------------------------------------------------------------------
+
+        // for (let i = 0; i < forbiddenWords.length; i++) {
+        //     isForbidden = goodPhrase.includes(forbiddenWords[i]);
+        //     if (isForbidden) {
+        //         if (taskNumber == 15) {
+        //             // exit from for  loop
+        //             goodPhrase = false;
+        //             break;
+        //         } else {
+        //             // Task 14
+        //             stars2 = "*".repeat(forbiddenWords[i].length);
+        //             goodPhrase = goodPhrase.replaceAll(
+        //                 forbiddenWords[i],
+        //                 stars2
+        //             );
+        //         }
+        //     }
+        // }
+        // --------------------------------------------------------------------------------
 
         return goodPhrase;
     };
+
+    const phrase14 = prompt("Odd is forbiden. Number?");
 
     const numbersWords = [
         "zero",
@@ -132,12 +175,22 @@ if (taskNumber < 6) {
         "nine",
     ];
 
-    const myForbidden = ["", "one", "three", "five", "seven", "nine"];
-
-    const phrase14 = prompt("Odd is forbiden. Number?");
+    const myForbidden = ["one", "three", "five", "seven", "nine"];
 
     const myNumberInWords = getNumberInWords(phrase14, numbersWords);
 
-    const correctPhrase = getCorrectPhrase(myNumberInWords, myForbidden);
-    console.log(`${myNumberInWords} convert to ${correctPhrase}`);
+    const correctPhrase = getCorrectPhrase(
+        myNumberInWords,
+        myForbidden,
+        taskNumber
+    );
+    if (taskNumber == 15) {
+        if (!correctPhrase) {
+            console.log(`Odd digits are forbidden!`);
+        } else {
+            console.log(`${myNumberInWords} is correct.`);
+        }
+    } else {
+        console.log(`${myNumberInWords} convert to ${correctPhrase}`);
+    }
 }
