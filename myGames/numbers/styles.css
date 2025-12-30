@@ -114,12 +114,13 @@
 }
 
 .start-wrapper {
-    width: 80%;
+    width: 100%;
     display: flex;
     justify-content: center;
 }
 
 .btn-start {
+    width: 80%;
     padding: 1rem;
 
     color: red;

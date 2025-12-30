@@ -4467,11 +4467,13 @@ const cars = [
     },
 ];
 
-const taskNumber = prompt("Task numbewr (max - 4)?", 3);
+const taskNumber = prompt("Task numbewr (max - 4)?", 1);
 
 if (taskNumber == 1) {
     const horsepowerSortedCars = [...cars].sort((a, b) => {
-        return a.Horsepower < b.Horsepower ? -1 : 1;
+        // return a.Horsepower > b.Horsepower ? 1 : -1;
+
+        return a.Horsepower - b.Horsepower;
     });
 
     console.log("Cars array is sorted by horspower:");
@@ -4494,4 +4496,17 @@ if (taskNumber == 1) {
 
     console.log("Car with max horsepower is (method3):");
     console.log(getMaxPowerCar(cars));
+} else if (taskNumber == 4) {
+    const sortNumbers = (getAray) => {
+        const sortedNumbers = [...getAray].sort((a, b) => {
+            return b - a;    //from max to min
+        });
+
+        return sortedNumbers;
+    };
+
+    const gotArray = [5, 10, 20, 11, 12, 1, 0, 14, 25];
+
+    console.log("Array from max to min:");
+    console.log(sortNumbers(gotArray));
 }

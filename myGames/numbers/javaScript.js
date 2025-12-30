@@ -2,7 +2,14 @@
 const cursorBox = document.getElementById("cursorBox");
 const leftButton = document.getElementById("leftBtn");
 const rightButton = document.getElementById("rightBtn");
-const selectButton = document.getElementById("selecttBtn");
+const selectButton = document.getElementById("selectBtn");
+const scoreHTMLArray = [
+    document.getElementById("palyerScore"),
+    document.getElementById("opponentScore"),
+];
+const gameLevel = document.getElementById("gameLevel");
+
+palyerScore;
 
 const rndInit = () => {
     let rnd = Math.random();
@@ -57,9 +64,15 @@ const changeBox = (getActionCode, boxName, par1) => {
     const currentBox = document.getElementById(boxName);
 
     if (getActionCode == 0) {
-        currentBox.textContent = par1;
-        currentBox.style.color =
-            par1 < -9 ? "red" : par1 < 10 ? "white" : "greenyellow";
+        if (!isNaN(par1)) {
+            currentBox.textContent = par1;
+
+            currentBox.style.color =
+                par1 < -9 ? "red" : par1 < 10 ? "white" : "greenyellow";
+        } else {
+            // empty
+            currentBox.textContent = "";
+        }
 
         currentBox.style.display = "flex";
     } else if (getActionCode == 1) {
@@ -104,7 +117,7 @@ const placeCursor = () => {
     cursorObj["ypx"] = x0 + getCoord(cursorObj["y"]);
 
     //palce cursor firs time
-    moveCursor(true);
+    moveCursor();
 };
 
 const checkIsBorderOut = (xDir, yDir) => {
@@ -161,16 +174,170 @@ const nextCursorPosition = () => {
     }
 
     //check borders
+    // in future will do mooving
     const isBorderOut = checkIsBorderOut(xDirection, yDirection);
 
     placeCursor();
 };
 
-const moveCursor = (isPlacing) => {
-    if (isPlacing) {
-        cursorBox.style.left = `${cursorObj["xpx"]}px`;
-        cursorBox.style.top = `${cursorObj["ypx"]}px`;
+const moveCursor = () => {
+    cursorBox.style.left = `${cursorObj["xpx"]}px`;
+    cursorBox.style.top = `${cursorObj["ypx"]}px`;
+    const currentColor = cursorColor[cursorObj["ownerNumber"]];
+    cursorBox.style.borderColor = currentColor;
+};
+
+const getFieldelEmentValue = (fx, fy) => {
+    if (fx >= 0 && fx < fieldSize && fy >= 0 && fy < fieldSize) {
+        line = field[fy];
+        const currBoxName = line[fx].boxName;
+        const gotValue = line[fx].value;
+        if (!isNaN(gotValue)) {
+            // when got, do it empty
+            line[fx].value = null;
+            field[fy] = line;
+            changeBox(0, currBoxName, null);
+
+            return gotValue;
+        } else {
+            return "Value is empty";
+        }
+    } else {
+        return "Coordinates is outbound";
     }
+};
+
+const showScore = () => {
+    let formatedScore = String(scoreArray[cursorObj.ownerNumber]);
+    scoreHTMLArray[cursorObj.ownerNumber].textContent = formatedScore;
+
+    return "OK";
+};
+
+const addScore = (gotValue) => {
+    console.log("Add score:  " + gotValue);
+    if (!isNaN(gotValue)) {
+        scoreArray[cursorObj.ownerNumber] += gotValue;
+        showScore();
+    }
+
+    return "OK";
+};
+
+const selectValue = () => {
+    const x = cursorObj["x"];
+    const y = cursorObj["y"];
+
+    const gotValue = getFieldelEmentValue(x, y);
+
+    if (!isNaN(gotValue)) {
+        taskDone = addScore(gotValue);
+    } else {
+        console.log("select value error:  " + taskDone);
+    }
+
+    return;
+};
+
+const readScoreLine = () => {
+    const tempScoreLine = [];
+    const x = cursorObj["x"];
+    const y = cursorObj["y"];
+
+    if (cursorObj["ownerNumber"]) {
+        // verticaly
+        field.forEach((line) => {
+            tempScoreLine.push(line[x]);
+        });
+    } else {
+        // horizontaly
+        tempScoreLine = field[y];
+    }
+};
+
+const getNearestPosition = (positions, currPos) => {
+    if (!positions.length) {
+        // epmty line
+        return [-1, 0];
+    }
+
+    positions.push(currPos);
+
+    let curPosIndex = 0;
+    let nearestSmaller = fieldSize; //max
+    let nearestBigger = fieldSize; //max
+    let distSmaler = fieldSize; //max
+    let distBigger = fieldSize; //max
+
+    const CountPositions = positions.length;
+
+    const sortedPositions = [...positions].sort((a, b) => {
+        return a - b; //min to max
+    });
+
+    for (let i = 0; i < CountPositions; i++) {
+        if (currPos === sortedPositions[i]) {
+            curPosIndex = i;
+            break;
+        }
+    }
+
+    if (curPosIndex > 0) {
+        nearestSmaller = sortedPositions[curPosIndex - 1];
+        distSmaler = currPos - nearestSmaller;
+    } else {
+        nearestSmaller = sortedPositions[CountPositions - 1];
+        distSmaler = currPos - (nearestSmaller - fieldSize);
+    }
+
+    if (curPosIndex < CountPositions - 1) {
+        nearestBigger = sortedPositions[curPosIndex + 1];
+        distBigger = nearestBigger - currPos;
+    } else {
+        nearestBigger = sortedPositions[0];
+        distBigger = nearestBigger + fieldSize - currPos;
+    }
+
+    if (!distSmaler || !distBigger) {
+        // cursor on box
+        return [currPos, 0];
+    }
+
+    if (distSmaler < distBigger) {
+        // go left
+        return [nearestSmaller, -1];
+    } else {
+        // go right
+        return [nearestBigger, 1];
+    }
+};
+
+const analyzeScoreLine = () => {
+    const tempOwnNmb = cursorObj["ownerNumber"];
+    let tempValuePosition = [];
+    let tempCursorPosition = 0;
+    if (tempOwnNmb) {
+        tempCursorPosition = cursorObj["y"];
+    } else {
+        tempCursorPosition = cursorObj["x"];
+    }
+
+    scoreLine = readScoreLine();
+
+    for (let i = 0; i < fieldSize; i++) {
+        if (!isNaN(scoreLine[i])) {
+            tempValuePosition.push(i);
+        }
+    }
+
+    lineStatus = {
+        valuesPositions: tempValuePosition,
+        cursorPosition: tempCursorPosition,
+        nearestPosition: 0,
+        nearestDirection: 0,
+        valuesCount: tempValuePosition.length,
+        varticalPlane: !!tempOwnNmb,
+    };
 };
 
 // -------------------------------------------------------------------------------------
@@ -179,6 +346,8 @@ const moveCursor = (isPlacing) => {
 let line = [];
 let taskDone;
 rndInit();
+let scoreArray = [0, 0];
+let scoreLine = [];
 
 let cursorObj = {
     name: "cursorBox",
@@ -192,8 +361,20 @@ let cursorObj = {
     yDirection: 0, //current direction -1 - top,  0- stop, 1 - bottom
     xBorderOut: 0, //0- in border, -1 - from left to right, 1 - from right to left
     yBorderOut: 0, //0- in border, -1 - from bottom to top, 1 - from top to bottom
-    color1: "yellow", //palyer cursor colour
-    color2: "red", //computer cursor color
+    color: [
+        "yellow", //palyer cursor colour
+        "red", //oponent cursor color
+    ],
+};
+const cursorColor = cursorObj["color"];
+
+let lineStatus = {
+    valuesPositions: [], // positions where are values
+    cursorPosition: 0, //where is cursor now
+    nearestPosition: 0, //where is nearest box
+    nearestDirection: 0, //-1 L or T, 1 R or B
+    valuesCount: 0, //0- game over, 1- do not move, >1 can move
+    varticalPlane: false, //False- hor, True - vert
 };
 
 // *********************************************************************************************
@@ -264,4 +445,11 @@ rightButton.addEventListener("click", () => {
     }
 
     taskDone = nextCursorPosition();
+});
+
+selectButton.addEventListener("click", () => {
+    taskDone = selectValue();
+    cursorObj["ownerNumber"] = 1 - cursorObj["ownerNumber"];
+    // change cursor color
+    taskDone = moveCursor();
 });
