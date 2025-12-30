@@ -6,7 +6,7 @@
 
 .page-wrapper {
     width: 800px;
-    height: 800px;
+    height: 1000px;
 
     margin: 3rem;
     padding: 2rem;
@@ -35,20 +35,35 @@
 
 .field-wrapper {
     width: 500px;
-    height: 500px;
+    /* height: 500px; */
+
+    position: relative;
 
     display: flex;
     flex-direction: column;
-    justify-content: start;
-    align-items: start;
+    justify-content: center;
+    align-items: center;
+
+    flex-wrap: wrap;
 
     border: 1px solid black;
     /* background-color: aqua; */
 }
 
+.cursor-box {
+    position: absolute;
+    /* left: 2px;
+    top: 2px; */
+
+    border: 3px solid yellow;
+    border-radius: 5px;
+}
+
 .line-wrapper {
-    height: 100px;
     width: 100%;
+
+    flex: 1;
+    flex-grow: 1;
 
     display: flex;
 
@@ -56,13 +71,10 @@
 }
 
 .square {
-    /* width: 55px; */
-    /* width: calc(500px / 10); */
-    /* height: 100px; */
-    /* height: 100px; */
+    /* height: 90px; */
 
     flex: 1;
-
+    flex-grow: 1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -111,4 +123,33 @@
     padding: 1rem;
 
     color: red;
+}
+
+.footer-wrapper {
+    width: 100%;
+
+    margin-top: 3rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    border: 1px dashed red;
+}
+
+.driver-wrapper {
+    width: 500px;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.cursor-btn {
+    width: 130px;
+    font-size: 1.5rem;
+    font-weight: 600;
+
+    color: brown;
+
+    border-radius: 20px;
+
+    padding: 1rem;
 }
