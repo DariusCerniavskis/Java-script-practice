@@ -3,13 +3,40 @@ const cursorBox = document.getElementById("cursorBox");
 const leftButton = document.getElementById("leftBtn");
 const rightButton = document.getElementById("rightBtn");
 const selectButton = document.getElementById("selectBtn");
-const scoreHTMLArray = [
-    document.getElementById("palyerScore"),
-    document.getElementById("opponentScore"),
-];
+
 const gameLevel = document.getElementById("gameLevel");
 
-palyerScore;
+const tablePlayers = [
+    {
+        playerName: document.getElementById("playerTableName"),
+        playerScore: document.getElementById("playerTableScore"),
+    },
+    {
+        playerName: document.getElementById("oponentTableName"),
+        playerScore: document.getElementById("oponentTableScore"),
+    },
+];
+
+const messageObj = {
+    wrapper: document.getElementById("msgWrapper"),
+    head: document.getElementById("msgHead"),
+    players: [
+        {
+            playerName: document.getElementById("playerName"),
+            playerScore: document.getElementById("playerScore"),
+        },
+        {
+            playerName: document.getElementById("oponentName"),
+            playerScore: document.getElementById("oponentScore"),
+        },
+    ],
+    conclusion: document.getElementById("conclusion"),
+    msgQuestion: document.getElementById("msgQuestion"),
+    buttons: {
+        yesButton: document.getElementById("yesBtn"),
+        noButton: document.getElementById("noBtn"),
+    },
+};
 
 const rndInit = () => {
     let rnd = Math.random();
@@ -209,7 +236,8 @@ const getFieldelEmentValue = (fx, fy) => {
 
 const showScore = () => {
     let formatedScore = String(scoreArray[cursorObj.ownerNumber]);
-    scoreHTMLArray[cursorObj.ownerNumber].textContent = formatedScore;
+    const tablePlayer = tablePlayers[cursorObj.ownerNumber];
+    tablePlayer["playerScore"].textContent = formatedScore;
 
     return "OK";
 };
@@ -256,11 +284,6 @@ const readScoreLine = () => {
 };
 
 const getNearestPosition = (positions, currPos) => {
-    if (!positions.length) {
-        // epmty line
-        return [-1, 0];
-    }
-
     positions.push(currPos);
 
     let curPosIndex = 0;
@@ -305,17 +328,19 @@ const getNearestPosition = (positions, currPos) => {
 
     if (distSmaler < distBigger) {
         // go left
-        return [nearestSmaller, -1];
+
+        return { nextPos: nearestSmaller, direct: -1 };
     } else {
         // go right
-        return [nearestBigger, 1];
+        return { nextPos: nearestBigger, direct: 1 };
     }
 };
 
-const analyzeScoreLine = () => {
+const analyzeFieldLine = () => {
     const tempOwnNmb = cursorObj["ownerNumber"];
     let tempValuePosition = [];
     let tempCursorPosition = 0;
+    let nearestPosAndDir = {}; //new position, direction
     if (tempOwnNmb) {
         tempCursorPosition = cursorObj["y"];
     } else {
@@ -330,14 +355,74 @@ const analyzeScoreLine = () => {
         }
     }
 
-    lineStatus = {
-        valuesPositions: tempValuePosition,
-        cursorPosition: tempCursorPosition,
-        nearestPosition: 0,
-        nearestDirection: 0,
-        valuesCount: tempValuePosition.length,
-        varticalPlane: !!tempOwnNmb,
-    };
+    if (tempValuePosition.length) {
+        nearestPosAndDir = getNearestPosition(
+            tempValuePosition,
+            tempCursorPosition
+        );
+
+        lineStatus = {
+            valuesPositions: tempValuePosition,
+            cursorPosition: tempCursorPosition,
+            nearestPosition: nearestPosAndDir["nextPos"],
+            nearestDirection: nearestPosAndDir["direct"],
+            valuesCount: tempValuePosition.length,
+            varticalPlane: !!tempOwnNmb,
+        };
+        return "OK";
+    } else {
+        // empty line. GAme over
+        return "Game over!";
+    }
+};
+
+const showMesage = (msgType) => {
+    //  Types
+    // 0- hide message
+    // 1 Lost
+    // 2 win
+
+    if (msgType == 0) {
+        // hide message
+        message.wrapper.display = `none`;
+    } else {
+        message.players[0].playerName.textContent = tablePlayers[0].playerName;
+        message.players[0].playerScore.textContent =
+            tablePlayers[0].playerScore;
+        message.players[1].playerName.textContent = tablePlayers[1].playerName;
+        message.players[1].playerScore.textContent =
+            tablePlayers[1].playerScore;
+        message.conclusion.textContent =
+            msgType === 1
+                ? `Sorry. You are lost.`
+                : `Congratulation. You are win!!!`;
+        message.conclusion.color = msgType === 1 ? `red` : `green`;
+        message.msgQuestion.textContent = `Do you want to paly the game ${
+            msgType === 1 ? "again?" : " in higher level?"
+        }`;
+        message.wrapper.display = `flex`;
+    }
+};
+
+const message = {
+    wrapper: document.getElementById("msgWrapper"),
+    head: document.getElementById("msgHead"),
+    players: [
+        {
+            playerName: document.getElementById("playerName"),
+            playerScore: document.getElementById("playerScore"),
+        },
+        {
+            playerName: document.getElementById("oponentName"),
+            playerScore: document.getElementById("oponentScore"),
+        },
+    ],
+    conclusion: document.getElementById("conclusion"),
+    msgQuestion: document.getElementById("msgQuestion"),
+    buttons: {
+        yesButton: document.getElementById("yesBtn"),
+        noButton: document.getElementById("noBtn"),
+    },
 };
 
 // -------------------------------------------------------------------------------------

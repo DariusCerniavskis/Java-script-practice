@@ -24,6 +24,37 @@
                     <div class="field-wrapper">
                         <div class="cursor-box" id="cursorBox"></div>
 
+                        <div class="message-wrapper" id="msgWrapper">
+                            <div class="msg-txt-wrapper">
+                                <h2 class="msg-head" id="msgHead">
+                                    Game over!
+                                </h2>
+                                <p class="message">
+                                    Result is:
+
+                                    <span id="playerName">Darius</span> :
+                                    <span id="playerScore">15</span>,
+                                    <span id="oponentName">Computer</span> :
+                                    <span id="oponentScore">25</span>.
+                                </p>
+
+                                <h3 id="conclusion">
+                                    Sorry, but you are lost.
+                                </h3>
+                            </div>
+
+                            <div class="msg-question">
+                                <h4 id="msgQuestion">
+                                    Do you want to paly the game again?
+                                </h4>
+                            </div>
+
+                            <div class="msg-nav">
+                                <button class="msg-btn" id="yesBtn">YES</button>
+                                <button class="msg-btn" id="noBtn">NO</button>
+                            </div>
+                        </div>
+
                         <!-- line 0 -->
                         <div class="line-wrapper">
                             <div class="square" id="position0000">-15</div>
@@ -166,13 +197,18 @@
 
                     <div class="meniu-wrapper">
                         <div class="score-wrapper">
-                            <h3>Player scores:</h3>
-                            <label for="" id="palyerScore">000</label>
+                            <h3>
+                                <span id="playerTableName"></span> scores:
+                            </h3>
+                            <label for="" id="playerTableScore">000</label>
                         </div>
 
                         <div class="score-wrapper">
-                            <h3>Oponent scores:</h3>
-                            <label for="" id="opponentScore">000</label>
+                            <h3>
+                                <span id="oponentTableName"></span> scores:
+                            </h3>
+
+                            <label for="" id="oponentTableScore">000</label>
                         </div>
 
                         <div class="score-wrapper">

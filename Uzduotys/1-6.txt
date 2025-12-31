@@ -1,0 +1,39 @@
+TASKS:
+1. Parašyti fn kuri grąžina stataus trikampio plotą; Trikampiui yra paduodamas trikampio ilgis ir plotis;
+ 
+2. Parašyt fn kuri apskaičiuoja apskritimo plotą; Į fn turi būt paduodamas skritulio spindulys(puse skersmens);
+ 
+3. Parašyti funkcija kuri atvaizduoja atvirkščia piramidę sukurtą iš #. 
+PVZ.: paduodamas skaičius 4
+####
+###
+##
+#
+ 
+4. Parašyti funkcija kuri atvaizduoja šukas iš  #. 
+PVZ.: paduodamas skaičius 3
+ 
+###
+#
+###
+ 
+PVZ.: paduodamas sk. 7
+ 
+#######
+#
+#######
+#
+#######
+#
+#######
+ 
+5. Sukurti fn kuri priima kaip argumentą 1sk. 
+5.1. SKaičius turi būt nuo 1 iki 6. Jeigu paduodama 11 - funkcija turi returnint tekstą "Bad provided arg";
+5.2. Funkcija turi sugeneruot random number nuo 1 iki 6 bei palyginti number su paduotu argumentu, jei reikšmės sutampa - gražinti tekstą "Success"; Jeigu skaičiai nesutampa - gražinti tekstą "You lost, try again";
+ 
+Extra:
+6. Parašyti funkcija kuri atvaizduoja kvadratą sukurtą iš #. 
+PVZ.: paduodamas skaičius 3
+###
+###
+###
