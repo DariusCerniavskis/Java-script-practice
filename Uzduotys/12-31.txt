@@ -1,0 +1,8 @@
+1. Sukurti paprastą formą su input bei button;
+2. Padaryt, kad paspaudus ant button consolėje būtu išvestas tekstas įvestas input'e;
+3. Consolėj atvaizduot objektą kuriame yra title, isDone ir creationDate;
+4. Pridėti minimalią validaciją, padaryt, kad consolėj atsirastu informacinė žinutė vietoj objekto jeigu task title bus trumpesnis už 3 simbolius;
+5. Apsisaugot nuo tarpu inpute;
+6. Sukurti masyvą bei sukurtus bei pravaliduotus objektus dėti į masyvą;
+7. Pridėjus task ištrinti inputą;
+8. forEach pagalba atvaizduoti task title consolej;
