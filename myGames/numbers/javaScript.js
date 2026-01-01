@@ -38,6 +38,9 @@ const messageObj = {
     },
 };
 
+const startButton=document.getElementById("startBtn")
+
+
 const rndInit = () => {
     let rnd = Math.random();
     for (let i = 0; i < Math.round(rnd * 100); i++) {
@@ -376,7 +379,7 @@ const analyzeFieldLine = () => {
     }
 };
 
-const showMesage = (msgType) => {
+const actionOnMesage = (msgType) => {
     //  Types
     // 0- hide message
     // 1 Lost
@@ -385,6 +388,7 @@ const showMesage = (msgType) => {
     if (msgType == 0) {
         // hide message
         message.wrapper.display = `none`;
+        return true;
     } else {
         message.players[0].playerName.textContent = tablePlayers[0].playerName;
         message.players[0].playerScore.textContent =
@@ -401,6 +405,15 @@ const showMesage = (msgType) => {
             msgType === 1 ? "again?" : " in higher level?"
         }`;
         message.wrapper.display = `flex`;
+
+        message.buttons.yesButton.addEventListener("click",()=>{
+            return true;
+        })
+        message.buttons.noButton.addEventListener("click",()=>{
+            return false;
+        })
+        return null;
+
     }
 };
 
@@ -428,6 +441,7 @@ const message = {
 // -------------------------------------------------------------------------------------
 
 // varables
+let messageOn=false;
 let line = [];
 let taskDone;
 rndInit();
@@ -492,7 +506,8 @@ cursorBox.style.width = `${cursorSize}px`;
 
 // make boxes
 taskDone = changeBoxesGroup(2, fieldSize, maxFieldSize, `${boxSize}px`);
-
+// hide the message box
+taskDone=showMesage(0);
 // fill the cursorObject
 
 cursorObj["x"] = getRandomValue(0, fieldSize);
@@ -504,37 +519,57 @@ taskDone = placeCursor();
 // moving
 cursorObj["ownerNumber"] = 0;
 
-leftButton.addEventListener("click", () => {
-    if (!cursorObj["ownerNumber"]) {
-        // horizontal
-        cursorObj["xDirection"] = -1;
-        cursorObj["yDirection"] = 0;
-    } else {
-        // vertical
-        cursorObj["xDirection"] = 0;
-        cursorObj["yDirection"] = -1;
-    }
 
-    taskDone = nextCursorPosition();
+
+
+
+leftButton.addEventListener("click", () => {
+    if(!messageOn){
+        if (!cursorObj["ownerNumber"]) {
+                // horizontal
+                cursorObj["xDirection"] = -1;
+                cursorObj["yDirection"] = 0;
+            } else {
+                // vertical
+                cursorObj["xDirection"] = 0;
+                cursorObj["yDirection"] = -1;
+            }
+
+            taskDone = nextCursorPosition();
+    }
+ 
 });
 
 rightButton.addEventListener("click", () => {
+    if (!messageOn){
     if (!cursorObj["ownerNumber"]) {
-        // horizontal
-        cursorObj["xDirection"] = 1;
-        cursorObj["yDirection"] = 0;
-    } else {
-        // vertical
-        cursorObj["xDirection"] = 0;
-        cursorObj["yDirection"] = 1;
-    }
+            // horizontal
+            cursorObj["xDirection"] = 1;
+            cursorObj["yDirection"] = 0;
+        } else {
+            // vertical
+            cursorObj["xDirection"] = 0;
+            cursorObj["yDirection"] = 1;
+        }
 
-    taskDone = nextCursorPosition();
+        taskDone = nextCursorPosition();
+    }
+ 
 });
 
 selectButton.addEventListener("click", () => {
-    taskDone = selectValue();
-    cursorObj["ownerNumber"] = 1 - cursorObj["ownerNumber"];
-    // change cursor color
-    taskDone = moveCursor();
+    if (!messageOn){
+        taskDone = selectValue();
+        cursorObj["ownerNumber"] = 1 - cursorObj["ownerNumber"];
+        // change cursor color
+        taskDone = moveCursor();
+    }
+ 
 });
+
+
+startButton.addEventListener("click",()=>{
+    if(!messageOn){
+        taskDone=actionOnMesage(1);
+    }
+})

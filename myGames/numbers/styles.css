@@ -21,6 +21,7 @@
 
     padding-bottom: 2rem;
 }
+
 .header-wrapper p {
     padding: 1rem;
     margin-bottom: 2rem;
@@ -70,6 +71,8 @@
     justify-content: center;
     align-items: center;
     gap: 2rem;
+
+    display: none;
 
     color: black;
 
