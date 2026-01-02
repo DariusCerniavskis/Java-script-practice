@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080",
+            "url": "file:///D:/Java-script-practice/myGames/numbers/index.html",
             "webRoot": "${workspaceFolder}"
         }
     ]

@@ -1,6 +1,0 @@
-0. Perkelti profanity logiką į fn. Fn turi priimt sakinį bei profanities žodžių array.
- 
-1. Parašyt kodą kuris išrikiuoja automobilius pagal Horsepower;
-2. Parašyt kodą kuris suranda automobilį kuris turi daugiausia Horsepower;
-3. Parašyt funkciją kuri priima masyvą objektų bei gražina automobilį kuris turi daugiausia Horsepower;
-4. CAO JS 12;

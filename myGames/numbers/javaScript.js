@@ -6,30 +6,41 @@ const selectButton = document.getElementById("selectBtn");
 
 const gameLevel = document.getElementById("gameLevel");
 
-const tablePlayers = [
+const tablePlayersHTML = [
     {
         playerName: document.getElementById("playerTableName"),
-        playerScore: document.getElementById("playerTableScore"),
+        playerScores: document.getElementById("playerTableScore"),
     },
     {
         playerName: document.getElementById("oponentTableName"),
-        playerScore: document.getElementById("oponentTableScore"),
+        playerScores: document.getElementById("oponentTableScore"),
     },
 ];
 
 const messageObj = {
     wrapper: document.getElementById("msgWrapper"),
     head: document.getElementById("msgHead"),
-    players: [
+    currScores: [
         {
-            playerName: document.getElementById("playerName"),
-            playerScore: document.getElementById("playerScore"),
+            playerName: document.getElementById("playerName0"),
+            playerScores: document.getElementById("playerScores0"),
         },
         {
-            playerName: document.getElementById("oponentName"),
-            playerScore: document.getElementById("oponentScore"),
+            playerName: document.getElementById("oponentName0"),
+            playerScores: document.getElementById("oponentScores0"),
         },
     ],
+    allScores: [
+        {
+            playerName: document.getElementById("playerName1"),
+            playerScores: document.getElementById("playerScores1"),
+        },
+        {
+            playerName: document.getElementById("oponentName1"),
+            playerScores: document.getElementById("oponentScores1"),
+        },
+    ],
+
     conclusion: document.getElementById("conclusion"),
     msgQuestion: document.getElementById("msgQuestion"),
     buttons: {
@@ -38,8 +49,19 @@ const messageObj = {
     },
 };
 
-const startButton=document.getElementById("startBtn")
+const startButton = document.getElementById("startBtn");
 
+// *****************************************************************
+// FUNCTIONS
+
+const tableInitialization = () => {
+    // tablePlayersHTML
+    tablePlayersHTML[0].playerName.textContent = playersObj[0].playerName;
+    tablePlayersHTML[0].playerScores.textContent = playersObj[0].playerScores;
+
+    tablePlayersHTML[1].playerName.textContent = playersObj[1].playerName;
+    tablePlayersHTML[1].playerScores.textContent = playersObj[0].playerScores;
+};
 
 const rndInit = () => {
     let rnd = Math.random();
@@ -74,7 +96,7 @@ const fillArray = (maxFieldSize) => {
                 boxName: "position" + getBoxCode(i, j),
 
                 //max+1 range field values range included
-                value: getRandomValue(minNumber, maxNumber + 1),
+                value: getRandomValue(gameObj.minNumber, gameObj.maxNumber + 1),
             };
 
             line.push(tempObject);
@@ -128,6 +150,7 @@ const changeBoxesGroup = (getActionCode, fieldSize, maxFieldSize, par1) => {
                 // write value or hide
                 actionCode = +(i >= fieldSize || j >= fieldSize);
                 changeBox(actionCode, line[j].boxName, line[j].value);
+
                 //
             } else if (getActionCode == 2) {
                 // change hight
@@ -142,83 +165,94 @@ const getCoord = (position) => {
     return position * boxSize;
 };
 
-const placeCursor = () => {
-    cursorObj["xpx"] = x0 + getCoord(cursorObj["x"]);
-    cursorObj["ypx"] = x0 + getCoord(cursorObj["y"]);
+const checkIsBorderOut = (curPos, newPos, dir) => {
+    // -1  smaller out
+    // 0   ok
+    // 1   bigger Out
 
-    //palce cursor firs time
-    moveCursor();
-};
-
-const checkIsBorderOut = (xDir, yDir) => {
-    let outFlag = false;
-    let xNew = cursorObj["x"] + xDir;
-    let yNew = cursorObj["y"] + yDir;
-
-    if (xNew < 0) {
-        xNew = fieldSize - 1;
-        cursorObj["xBorderOut"] = -1;
-    } else if (xNew == fieldSize) {
-        xNew = 0;
-        cursorObj["xBorderOut"] = -1;
+    if (Math.sign(curPos - newPos) === dir) {
+        return dir;
     } else {
-        cursorObj["xBorderOut"] = 0;
+        return 0;
     }
-
-    outFlag = !!cursorObj["xBorderOut"];
-    // console.log("xborder " + cursorObj["xBorderOut"] + "   " + outFlag);
-
-    if (yNew < 0) {
-        yNew = fieldSize - 1;
-        cursorObj["yBorderOut"] = -1;
-    } else if (yNew == fieldSize) {
-        yNew = 0;
-        cursorObj["yBorderOut"] = -1;
-    } else {
-        cursorObj["yBorderOut"] = 0;
-    }
-
-    if (!outFlag) {
-        outFlag = !!cursorObj["yBorderOut"];
-    }
-
-    cursorObj["x"] = xNew;
-    cursorObj["y"] = yNew;
-
-    return outFlag;
 };
 
 const nextCursorPosition = () => {
-    let xDirection = 0;
-    let yDirection = 0;
+    let tempDirect = 0;
+    let newIndex = 0;
+    const tempValPosIndex = lineStatus.valuePosIndex;
 
-    if (cursorObj["ownerNumber"]) {
-        yDirection = cursorObj["yDirection"];
-    } else {
-        xDirection = cursorObj["xDirection"];
-    }
+    if (cursorObj.xDirection + cursorObj.yDirection) {
+        //move
 
-    if (!(xDirection + yDirection)) {
-        //not move
-        return;
+        if (cursorObj.ownerNumber) {
+            tempDirect = cursorObj.yDirection;
+        } else {
+            tempDirect = cursorObj.xDirection;
+        }
+
+        if (tempDirect < 0) {
+            if (tempValPosIndex > 0) {
+                newIndex = tempValPosIndex - 1;
+            } else {
+                newIndex = lineStatus.valuesPositions.length - 1;
+            }
+        } else {
+            if (tempValPosIndex < lineStatus.valuesPositions.length - 1) {
+                newIndex = tempValPosIndex + 1;
+            } else {
+                newIndex = 0;
+            }
+        }
+
+        if (cursorObj.ownerNumber) {
+            cursorObj.yNew = lineStatus.valuesPositions[newIndex];
+            cursorObj.yBorderOut = checkIsBorderOut(
+                cursorObj.y,
+                cursorObj.yNew,
+                tempDirect
+            );
+        } else {
+            cursorObj.xNew = lineStatus.valuesPositions[newIndex];
+            cursorObj.xBorderOut = checkIsBorderOut(
+                cursorObj.x,
+                cursorObj.xNew,
+                tempDirect
+            );
+        }
+        lineStatus.valuePosIndex = newIndex;
     }
 
     //check borders
     // in future will do mooving
-    const isBorderOut = checkIsBorderOut(xDirection, yDirection);
+    console.log("move");
 
-    placeCursor();
+    console.log(cursorObj);
+    console.log(lineStatus);
+
+    moveCursor();
 };
 
 const moveCursor = () => {
-    cursorBox.style.left = `${cursorObj["xpx"]}px`;
-    cursorBox.style.top = `${cursorObj["ypx"]}px`;
-    const currentColor = cursorColor[cursorObj["ownerNumber"]];
+    cursorObj.xpx = gameObj.x0 + getCoord(cursorObj.xNew);
+    cursorObj.ypx = gameObj.y0 + getCoord(cursorObj.yNew);
+
+    cursorBox.style.left = `${cursorObj.xpx}px`;
+    cursorBox.style.top = `${cursorObj.ypx}px`;
+    const currentColor = cursorColor[cursorObj.ownerNumber];
     cursorBox.style.borderColor = currentColor;
+
+    cursorObj.x = cursorObj.xNew;
+    cursorObj.y = cursorObj.yNew;
 };
 
 const getFieldelEmentValue = (fx, fy) => {
-    if (fx >= 0 && fx < fieldSize && fy >= 0 && fy < fieldSize) {
+    if (
+        fx >= 0 &&
+        fx < gameObj.fieldSize &&
+        fy >= 0 &&
+        fy < gameObj.fieldSize
+    ) {
         line = field[fy];
         const currBoxName = line[fx].boxName;
         const gotValue = line[fx].value;
@@ -238,17 +272,16 @@ const getFieldelEmentValue = (fx, fy) => {
 };
 
 const showScore = () => {
-    let formatedScore = String(scoreArray[cursorObj.ownerNumber]);
-    const tablePlayer = tablePlayers[cursorObj.ownerNumber];
-    tablePlayer["playerScore"].textContent = formatedScore;
+    let formatedScore = String(playersObj[cursorObj.ownerNumber].playerScores);
+    const tablePlayer = tablePlayersHTML[cursorObj.ownerNumber];
+    tablePlayer.playerScores.textContent = formatedScore;
 
     return "OK";
 };
 
 const addScore = (gotValue) => {
-    console.log("Add score:  " + gotValue);
     if (!isNaN(gotValue)) {
-        scoreArray[cursorObj.ownerNumber] += gotValue;
+        playersObj[cursorObj.ownerNumber].playerScores += gotValue;
         showScore();
     }
 
@@ -256,8 +289,10 @@ const addScore = (gotValue) => {
 };
 
 const selectValue = () => {
-    const x = cursorObj["x"];
-    const y = cursorObj["y"];
+    const x = cursorObj.x;
+    const y = cursorObj.y;
+
+    console.log(x + "   cur xy    " + y);
 
     const gotValue = getFieldelEmentValue(x, y);
 
@@ -270,34 +305,44 @@ const selectValue = () => {
     return;
 };
 
-const readScoreLine = () => {
+const readScoreLine = (sx, sy) => {
+    let tempfieldElementLine = [];
     const tempScoreLine = [];
-    const x = cursorObj["x"];
-    const y = cursorObj["y"];
 
     if (cursorObj["ownerNumber"]) {
         // verticaly
         field.forEach((line) => {
-            tempScoreLine.push(line[x]);
+            tempfieldElementLine.push(line[sx]);
         });
     } else {
         // horizontaly
-        tempScoreLine = field[y];
+        tempfieldElementLine = field[sy];
     }
+
+    for (let i = 0; i < gameObj.fieldSize; i++) {
+        tempScoreLine.push(tempfieldElementLine[i].value);
+    }
+
+    console.log("tempScoreLine");
+    console.log(tempScoreLine);
+    return tempScoreLine;
 };
 
 const getNearestPosition = (positions, currPos) => {
-    positions.push(currPos);
+    const tempPositions = JSON.parse(JSON.stringify(positions));
+    tempPositions.push(currPos);
 
     let curPosIndex = 0;
-    let nearestSmaller = fieldSize; //max
-    let nearestBigger = fieldSize; //max
-    let distSmaler = fieldSize; //max
-    let distBigger = fieldSize; //max
+    let nearestSmaller = gameObj.fieldSize; //max
+    let nearestBigger = gameObj.fieldSize; //max
+    let distSmaler = gameObj.fieldSize; //max
+    let distBigger = gameObj.fieldSize; //max
+    let smallerInField = false;
+    let biggerInField = false;
 
-    const CountPositions = positions.length;
+    const CountPositions = tempPositions.length;
 
-    const sortedPositions = [...positions].sort((a, b) => {
+    const sortedPositions = [...tempPositions].sort((a, b) => {
         return a - b; //min to max
     });
 
@@ -308,150 +353,246 @@ const getNearestPosition = (positions, currPos) => {
         }
     }
 
-    if (curPosIndex > 0) {
+    smallerInField = !!curPosIndex;
+    if (smallerInField) {
         nearestSmaller = sortedPositions[curPosIndex - 1];
         distSmaler = currPos - nearestSmaller;
     } else {
         nearestSmaller = sortedPositions[CountPositions - 1];
-        distSmaler = currPos - (nearestSmaller - fieldSize);
+        distSmaler = currPos - (nearestSmaller - gameObj.fieldSize);
     }
 
-    if (curPosIndex < CountPositions - 1) {
+    biggerInField = curPosIndex < CountPositions - 1;
+    if (biggerInField) {
         nearestBigger = sortedPositions[curPosIndex + 1];
         distBigger = nearestBigger - currPos;
     } else {
         nearestBigger = sortedPositions[0];
-        distBigger = nearestBigger + fieldSize - currPos;
+        distBigger = nearestBigger + gameObj.fieldSize - currPos;
     }
 
-    if (!distSmaler || !distBigger) {
-        // cursor on box
-        return [currPos, 0];
-    }
+    if (distSmaler || distBigger) {
+        if (distSmaler < distBigger) {
+            // go left
 
-    if (distSmaler < distBigger) {
-        // go left
-
-        return { nextPos: nearestSmaller, direct: -1 };
+            return -1;
+        } else if (distSmaler > distBigger) {
+            // go right
+            return 1;
+        } else {
+            // same distance
+            if (smallerInField) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
     } else {
-        // go right
-        return { nextPos: nearestBigger, direct: 1 };
+        // cursor on box
+        return 0;
     }
 };
 
-const analyzeFieldLine = () => {
+const createFieldLine = (isFirstTime) => {
     const tempOwnNmb = cursorObj["ownerNumber"];
-    let tempValuePosition = [];
-    let tempCursorPosition = 0;
-    let nearestPosAndDir = {}; //new position, direction
+    let tempValuePositions = [];
+    let tempValPosIndex = 0;
+
     if (tempOwnNmb) {
-        tempCursorPosition = cursorObj["y"];
+        tempValPosIndex = isFirstTime ? cursorObj.yNew : cursorObj.y;
     } else {
-        tempCursorPosition = cursorObj["x"];
+        tempValPosIndex = isFirstTime ? cursorObj.xNew : cursorObj.x;
     }
 
-    scoreLine = readScoreLine();
+    scoreLine = readScoreLine(cursorObj.x, cursorObj.y);
 
-    for (let i = 0; i < fieldSize; i++) {
-        if (!isNaN(scoreLine[i])) {
-            tempValuePosition.push(i);
+    for (let i = 0; i < gameObj.fieldSize; i++) {
+        if (scoreLine[i] !== null) {
+            tempValuePositions.push(i);
         }
     }
 
-    if (tempValuePosition.length) {
-        nearestPosAndDir = getNearestPosition(
-            tempValuePosition,
-            tempCursorPosition
-        );
+    // console.log("tempValuePositions len" + tempValuePositions.length);
 
-        lineStatus = {
-            valuesPositions: tempValuePosition,
-            cursorPosition: tempCursorPosition,
-            nearestPosition: nearestPosAndDir["nextPos"],
-            nearestDirection: nearestPosAndDir["direct"],
-            valuesCount: tempValuePosition.length,
-            varticalPlane: !!tempOwnNmb,
-        };
-        return "OK";
+    // tempValuePositions.forEach((element) => {
+    //     console.log(element);
+    // });
+
+    if (tempValuePositions.length) {
+        lineStatus.valuesPositions = tempValuePositions;
+        lineStatus.valuePosIndex = tempValPosIndex;
+        lineStatus.verticalPlane = !!tempOwnNmb;
+
+        if (!isFirstTime) {
+            lineStatus.nearestDirection = getNearestPosition(
+                tempValuePositions,
+                tempValPosIndex
+            );
+
+            if (lineStatus.verticalPlane) {
+                cursorObj.xDirection = 0;
+                cursorObj.yDirection = lineStatus.nearestDirection;
+            } else {
+                cursorObj.xDirection = lineStatus.nearestDirection;
+                cursorObj.yDirection = 0;
+            }
+        }
+
+        return 0; //Game status paly
     } else {
-        // empty line. GAme over
-        return "Game over!";
+        // empty line. Game over
+        //lose win
+        gameObj.gameStatus = Math.sign(
+            playersObj[0].playerScores - playersObj[1].playerScores
+        );
+        if (!gameObj.gameStatus) {
+            gameObj.gameStatus = Math.sign(
+                playersObj[0].allScores - playersObj[1].allScores
+            );
+        }
+
+        gameObj.playerAction = actionOnMesage(gameObj.gameStatus);
+
+        console.log("Game over!!!");
+        console.log(playersObj);
+
+        return gameObj.gameStatus;
     }
 };
 
 const actionOnMesage = (msgType) => {
     //  Types
+    // -1 Lost
     // 0- hide message
-    // 1 Lost
-    // 2 win
+    // 1 win
 
     if (msgType == 0) {
         // hide message
-        message.wrapper.display = `none`;
-        return true;
-    } else {
-        message.players[0].playerName.textContent = tablePlayers[0].playerName;
-        message.players[0].playerScore.textContent =
-            tablePlayers[0].playerScore;
-        message.players[1].playerName.textContent = tablePlayers[1].playerName;
-        message.players[1].playerScore.textContent =
-            tablePlayers[1].playerScore;
-        message.conclusion.textContent =
-            msgType === 1
+        messageObj.wrapper.style.display = `none`;
+        isMessage = false;
+        return;
+    } else if (msgType == -1 || msgType == 1) {
+        isMessage = true;
+        let clickYes = 0;
+
+        messageObj.currScores[0].playerName.textContent =
+            playersObj[0].playerName;
+        messageObj.currScores[0].playerScores.textContent =
+            playersObj[0].playerScores;
+        messageObj.currScores[1].playerName.textContent =
+            playersObj[1].playerName;
+        messageObj.currScores[1].playerScores.textContent =
+            playersObj[1].playerScores;
+        messageObj.conclusion.textContent =
+            msgType === -1
                 ? `Sorry. You are lost.`
                 : `Congratulation. You are win!!!`;
-        message.conclusion.color = msgType === 1 ? `red` : `green`;
-        message.msgQuestion.textContent = `Do you want to paly the game ${
-            msgType === 1 ? "again?" : " in higher level?"
+        messageObj.conclusion.style.color = msgType === -1 ? `red` : `green`;
+
+        messageObj.allScores[0].playerName.textContent =
+            playersObj[0].playerName;
+        messageObj.allScores[0].playerScores.textContent =
+            playersObj[0].allScores;
+        messageObj.allScores[1].playerName.textContent =
+            playersObj[1].playerName;
+        messageObj.allScores[1].playerScores.textContent =
+            playersObj[1].allScores;
+
+        messageObj.msgQuestion.textContent = `Do you want to paly the game ${
+            msgType === -1 ? "again?" : " in higher level?"
         }`;
-        message.wrapper.display = `flex`;
+        messageObj.wrapper.style.display = "flex";
 
-        message.buttons.yesButton.addEventListener("click",()=>{
-            return true;
-        })
-        message.buttons.noButton.addEventListener("click",()=>{
-            return false;
-        })
-        return null;
+        messageObj.buttons.yesButton.addEventListener("click", () => {
+            if (isMessage) {
+                clickYes = 1;
+                actionOnMesage(0);
+            }
+        });
+        messageObj.buttons.noButton.addEventListener("click", () => {
+            if (isMessage) {
+                clickYes = -1;
+                actionOnMesage(0);
+            }
+        });
 
+        return clickYes;
     }
 };
 
-const message = {
-    wrapper: document.getElementById("msgWrapper"),
-    head: document.getElementById("msgHead"),
-    players: [
-        {
-            playerName: document.getElementById("playerName"),
-            playerScore: document.getElementById("playerScore"),
-        },
-        {
-            playerName: document.getElementById("oponentName"),
-            playerScore: document.getElementById("oponentScore"),
-        },
-    ],
-    conclusion: document.getElementById("conclusion"),
-    msgQuestion: document.getElementById("msgQuestion"),
-    buttons: {
-        yesButton: document.getElementById("yesBtn"),
-        noButton: document.getElementById("noBtn"),
-    },
+const driverButonActivity = (isActive) => {
+    if (isActive) {
+        leftButton.addEventListener("click", () => {
+            if (!isMessage) {
+                if (!cursorObj.ownerNumber) {
+                    // horizontal
+                    cursorObj.xDirection = -1;
+                    cursorObj.yDirection = 0;
+                } else {
+                    // vertical
+                    cursorObj.xDirection = 0;
+                    cursorObj.yDirection = -1;
+                }
+
+                taskDone = nextCursorPosition();
+            }
+        });
+
+        rightButton.addEventListener("click", () => {
+            if (!isMessage) {
+                if (!cursorObj.ownerNumber) {
+                    // horizontal
+                    cursorObj.xDirection = 1;
+                    cursorObj.yDirection = 0;
+                } else {
+                    // vertical
+                    cursorObj.xDirection = 0;
+                    cursorObj.yDirection = 1;
+                }
+
+                taskDone = nextCursorPosition();
+            }
+        });
+
+        selectButton.addEventListener("click", () => {
+            if (!isMessage) {
+                console.log(cursorObj.x + "   x nx     " + cursorObj.xNew);
+                console.log(cursorObj.y + "   y ny     " + cursorObj.yNew);
+                taskDone = selectValue();
+                cursorObj.ownerNumber = 1 - cursorObj.ownerNumber;
+
+                taskDone = createFieldLine(false);
+
+                if (taskDone === 0) {
+                    taskDone = nextCursorPosition();
+                } else {
+                    //game over
+                    console.log("Game over");
+                }
+            }
+        });
+    } else {
+        // silence while message show
+    }
 };
 
 // -------------------------------------------------------------------------------------
 
 // varables
-let messageOn=false;
-let line = [];
 let taskDone;
+
+let isMessage = false;
+let line = [];
+
 rndInit();
-let scoreArray = [0, 0];
 let scoreLine = [];
 
 let cursorObj = {
     name: "cursorBox",
-    x: 0, //0-9
+    x: 0, //0-9  current poz
     y: 0, //0-9
+    xNew: 0, //0-9  planing poz
+    yNew: 0, //0-9
     fieldBoxSize: 0, //depend on field size
     xpx: 0, //pixels from left
     ypx: 0, //pixels from top
@@ -465,26 +606,50 @@ let cursorObj = {
         "red", //oponent cursor color
     ],
 };
+
+cursorObj.xDirection = 0;
+
 const cursorColor = cursorObj["color"];
+
+let playersObj = [
+    {
+        playerName: "Player",
+        playerScores: 0,
+        allScores: 0,
+        palyerStatus: 0, //-1 lose, 0- play, 1 win
+    },
+    {
+        playerName: "Computer",
+        playerScores: 0,
+        allScores: 0,
+        palyerStatus: 0, //-1 lose, 0- play, 1 win
+    },
+];
 
 let lineStatus = {
     valuesPositions: [], // positions where are values
-    cursorPosition: 0, //where is cursor now
+    valuePosIndex: -1, // index in valuesPositions array
     nearestPosition: 0, //where is nearest box
     nearestDirection: 0, //-1 L or T, 1 R or B
-    valuesCount: 0, //0- game over, 1- do not move, >1 can move
-    varticalPlane: false, //False- hor, True - vert
+    verticalPlane: false, //False- hor, True - vert
 };
 
 // *********************************************************************************************
 // start parameters
-const minNumber = -15;
-const maxNumber = 15;
-const maxFieldSize = 10;
-const fieldSize = 6;
-const cursorBorder = 3;
-const x0 = 3;
-const y0 = 3;
+
+const gameObj = {
+    //0-Continue,  -2 lost exit,-1 lost, again, 1- win
+    gameStatus: 0, //-1 lost, 0- paly, 1- win
+    playerAction: 0, //-1 exit, 0- current play, 1- another game
+    minNumber: -15,
+    maxNumber: 15,
+    maxFieldSize: 10,
+    fieldSize: 5,
+
+    cursorBorder: 3,
+    x0: 3,
+    y0: 3,
+};
 
 // ******************************************************************************************
 
@@ -492,84 +657,46 @@ const y0 = 3;
 // "box": box object
 // "value": box numeric value
 
-const field = fillArray(maxFieldSize);
+const field = fillArray(gameObj.maxFieldSize);
 
 // write values and hide
-taskDone = changeBoxesGroup(0, fieldSize, maxFieldSize);
+taskDone = changeBoxesGroup(0, gameObj.fieldSize, gameObj.maxFieldSize);
 
 // box size
 // change height
-const boxSize = Math.floor(500 / fieldSize);
-const cursorSize = boxSize - 2 * cursorBorder;
+const boxSize = Math.floor(500 / gameObj.fieldSize);
+const cursorSize = boxSize - 2 * gameObj.cursorBorder;
 cursorBox.style.height = `${cursorSize}px`;
 cursorBox.style.width = `${cursorSize}px`;
 
 // make boxes
-taskDone = changeBoxesGroup(2, fieldSize, maxFieldSize, `${boxSize}px`);
+taskDone = changeBoxesGroup(
+    2,
+    gameObj.fieldSize,
+    gameObj.maxFieldSize,
+    `${boxSize}px`
+);
 // hide the message box
-taskDone=showMesage(0);
+taskDone = actionOnMesage(0);
+
+taskDone = tableInitialization();
+
 // fill the cursorObject
 
-cursorObj["x"] = getRandomValue(0, fieldSize);
-cursorObj["y"] = getRandomValue(0, fieldSize);
 cursorObj["fieldBoxSize"] = boxSize;
 
-taskDone = placeCursor();
-
-// moving
+// START
 cursorObj["ownerNumber"] = 0;
 
+cursorObj.xNew = getRandomValue(0, gameObj.fieldSize);
+cursorObj.yNew = getRandomValue(0, gameObj.fieldSize);
+taskDone = createFieldLine(true);
+taskDone = nextCursorPosition();
 
+taskDone = driverButonActivity(true);
 
-
-
-leftButton.addEventListener("click", () => {
-    if(!messageOn){
-        if (!cursorObj["ownerNumber"]) {
-                // horizontal
-                cursorObj["xDirection"] = -1;
-                cursorObj["yDirection"] = 0;
-            } else {
-                // vertical
-                cursorObj["xDirection"] = 0;
-                cursorObj["yDirection"] = -1;
-            }
-
-            taskDone = nextCursorPosition();
+startButton.addEventListener("click", () => {
+    if (!isMessage) {
+        taskDone = actionOnMesage(1);
     }
- 
 });
-
-rightButton.addEventListener("click", () => {
-    if (!messageOn){
-    if (!cursorObj["ownerNumber"]) {
-            // horizontal
-            cursorObj["xDirection"] = 1;
-            cursorObj["yDirection"] = 0;
-        } else {
-            // vertical
-            cursorObj["xDirection"] = 0;
-            cursorObj["yDirection"] = 1;
-        }
-
-        taskDone = nextCursorPosition();
-    }
- 
-});
-
-selectButton.addEventListener("click", () => {
-    if (!messageOn){
-        taskDone = selectValue();
-        cursorObj["ownerNumber"] = 1 - cursorObj["ownerNumber"];
-        // change cursor color
-        taskDone = moveCursor();
-    }
- 
-});
-
-
-startButton.addEventListener("click",()=>{
-    if(!messageOn){
-        taskDone=actionOnMesage(1);
-    }
-})

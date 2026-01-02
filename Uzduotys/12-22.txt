@@ -1,8 +1,0 @@
-0. Parašyti komanda kuri atvaizduos tiek kartu tekstą "CAR" kiek yra automobilių masyve;
-1. Parašyti komandą kuri gražins automobilius, kurie turi parametrą "Miles_per_Gallon" ;
-2. Parašyti komandą kuri gražins automobilius, kurie neturi "Miles_per_Gallon" ;
-3. Parašyti komandą kuri gražins automobilius, kurie turi parametrą 8 "Cylinders" ir "Miles_per_Gallon" parametras didesnis arba lygus 15.
-4.  Parašyti komandą kuri gražins automobilius su pridėtu papildomu lauku ojekte, kuris vadinasi "Kilowatts", jis yra lygus "Horsepower" * 0.7457;
-5. Parašyti komandą kuri gražins true arba false reikšmę tikrinant ar visi automobiliai yra pagaminti "USA".
-6. Para6yti fn, kuri atvaizduoja kiekvieno automobilio esančio masyve modelį;
-7. CAO  JS11.
