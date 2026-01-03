@@ -177,15 +177,18 @@ const checkIsBorderOut = (curPos, newPos, dir) => {
     }
 };
 
-const nextCursorPosition = () => {
+const nextCursorPosition = (isNearest) => {
     let tempDirect = 0;
     let newIndex = 0;
     const tempValPosIndex = lineStatus.valuePosIndex;
+    const tempOwnerNumber=cursorObj.ownerNumber
+    const tempValPosLenght=lineStatus.valuesPositions.length
+    let tempActiveValPos=0
 
     if (cursorObj.xDirection + cursorObj.yDirection) {
         //move
 
-        if (cursorObj.ownerNumber) {
+        if (tempOwnerNumber) {
             tempDirect = cursorObj.yDirection;
         } else {
             tempDirect = cursorObj.xDirection;
@@ -195,23 +198,24 @@ const nextCursorPosition = () => {
             if (tempValPosIndex > 0) {
                 newIndex = tempValPosIndex - 1;
             } else {
-                newIndex = lineStatus.valuesPositions.length - 1;
+                newIndex = tempValPosLenght - 1;
             }
         } else {
-            if (tempValPosIndex < lineStatus.valuesPositions.length - 1) {
+            if (tempValPosIndex < tempValPosLenght - 1) {
                 newIndex = tempValPosIndex + 1;
             } else {
                 newIndex = 0;
             }
         }
 
-        if (cursorObj.ownerNumber) {
+        if (tempOwnerNumber) {
             cursorObj.yNew = lineStatus.valuesPositions[newIndex];
             cursorObj.yBorderOut = checkIsBorderOut(
                 cursorObj.y,
                 cursorObj.yNew,
                 tempDirect
             );
+            tempActiveValPos=cursorObj.yNew
         } else {
             cursorObj.xNew = lineStatus.valuesPositions[newIndex];
             cursorObj.xBorderOut = checkIsBorderOut(
@@ -219,18 +223,36 @@ const nextCursorPosition = () => {
                 cursorObj.xNew,
                 tempDirect
             );
+           tempActiveValPos=cursorObj.xNew            
         }
-        lineStatus.valuePosIndex = newIndex;
+
+        if (isNearest){
+            // Delete hole in line
+            let tempValuePositions=[];
+            let j=0;
+
+            for (let i=0;i<tempValPosLenght;i++){
+                if (tempActiveValPos===lineStatus.valuesPositions[i]){
+                   lineStatus.valuePosIndex=j 
+                }
+
+                if(i!==tempValPosIndex){
+                    tempValuePositions.push(lineStatus.valuesPositions[i]);
+                    j++
+                }
+                
+ 
+            }
+            lineStatus.valuesPositions=tempValuePositions
+        } else{
+            lineStatus.valuePosIndex=newIndex
+        }
+
     }
 
     //check borders
     // in future will do mooving
-    console.log("move");
-
-    console.log(cursorObj);
-    console.log(lineStatus);
-
-    moveCursor();
+     moveCursor();
 };
 
 const moveCursor = () => {
@@ -329,8 +351,6 @@ const readScoreLine = (sx, sy) => {
 };
 
 const getNearestPosition = (positions, currPos) => {
-    const tempPositions = JSON.parse(JSON.stringify(positions));
-    tempPositions.push(currPos);
 
     let curPosIndex = 0;
     let nearestSmaller = gameObj.fieldSize; //max
@@ -340,14 +360,14 @@ const getNearestPosition = (positions, currPos) => {
     let smallerInField = false;
     let biggerInField = false;
 
-    const CountPositions = tempPositions.length;
+    const CountPositions = positions.length;
 
-    const sortedPositions = [...tempPositions].sort((a, b) => {
-        return a - b; //min to max
-    });
+    // const positions = [...tempPositions].sort((a, b) => {
+    //     return a - b; //min to max
+    // });
 
     for (let i = 0; i < CountPositions; i++) {
-        if (currPos === sortedPositions[i]) {
+        if (currPos === positions[i]) {
             curPosIndex = i;
             break;
         }
@@ -355,19 +375,19 @@ const getNearestPosition = (positions, currPos) => {
 
     smallerInField = !!curPosIndex;
     if (smallerInField) {
-        nearestSmaller = sortedPositions[curPosIndex - 1];
+        nearestSmaller = positions[curPosIndex - 1];
         distSmaler = currPos - nearestSmaller;
     } else {
-        nearestSmaller = sortedPositions[CountPositions - 1];
+        nearestSmaller = positions[CountPositions - 1];
         distSmaler = currPos - (nearestSmaller - gameObj.fieldSize);
     }
 
     biggerInField = curPosIndex < CountPositions - 1;
     if (biggerInField) {
-        nearestBigger = sortedPositions[curPosIndex + 1];
+        nearestBigger = positions[curPosIndex + 1];
         distBigger = nearestBigger - currPos;
     } else {
-        nearestBigger = sortedPositions[0];
+        nearestBigger = positions[0];
         distBigger = nearestBigger + gameObj.fieldSize - currPos;
     }
 
@@ -381,10 +401,10 @@ const getNearestPosition = (positions, currPos) => {
             return 1;
         } else {
             // same distance
-            if (smallerInField) {
-                return -1;
-            } else {
+            if (biggerInField) {
                 return 1;
+            } else {
+                return -1;
             }
         }
     } else {
@@ -407,18 +427,14 @@ const createFieldLine = (isFirstTime) => {
     scoreLine = readScoreLine(cursorObj.x, cursorObj.y);
 
     for (let i = 0; i < gameObj.fieldSize; i++) {
-        if (scoreLine[i] !== null) {
+        if (scoreLine[i] !== null || i===tempValPosIndex) {
             tempValuePositions.push(i);
         }
     }
 
-    // console.log("tempValuePositions len" + tempValuePositions.length);
 
-    // tempValuePositions.forEach((element) => {
-    //     console.log(element);
-    // });
 
-    if (tempValuePositions.length) {
+    if (tempValuePositions.length>1) {
         lineStatus.valuesPositions = tempValuePositions;
         lineStatus.valuePosIndex = tempValPosIndex;
         lineStatus.verticalPlane = !!tempOwnNmb;
@@ -429,7 +445,7 @@ const createFieldLine = (isFirstTime) => {
                 tempValPosIndex
             );
 
-            if (lineStatus.verticalPlane) {
+            if (tempOwnNmb) {
                 cursorObj.xDirection = 0;
                 cursorObj.yDirection = lineStatus.nearestDirection;
             } else {
@@ -437,6 +453,7 @@ const createFieldLine = (isFirstTime) => {
                 cursorObj.yDirection = 0;
             }
         }
+        nextCursorPosition(true)
 
         return 0; //Game status paly
     } else {
@@ -534,7 +551,7 @@ const driverButonActivity = (isActive) => {
                     cursorObj.yDirection = -1;
                 }
 
-                taskDone = nextCursorPosition();
+                taskDone = nextCursorPosition(false);
             }
         });
 
@@ -550,22 +567,19 @@ const driverButonActivity = (isActive) => {
                     cursorObj.yDirection = 1;
                 }
 
-                taskDone = nextCursorPosition();
+                taskDone = nextCursorPosition(false);
             }
         });
 
         selectButton.addEventListener("click", () => {
             if (!isMessage) {
-                console.log(cursorObj.x + "   x nx     " + cursorObj.xNew);
-                console.log(cursorObj.y + "   y ny     " + cursorObj.yNew);
+
                 taskDone = selectValue();
                 cursorObj.ownerNumber = 1 - cursorObj.ownerNumber;
 
                 taskDone = createFieldLine(false);
 
-                if (taskDone === 0) {
-                    taskDone = nextCursorPosition();
-                } else {
+                if (!taskDone ) {
                     //game over
                     console.log("Game over");
                 }
@@ -691,7 +705,7 @@ cursorObj["ownerNumber"] = 0;
 cursorObj.xNew = getRandomValue(0, gameObj.fieldSize);
 cursorObj.yNew = getRandomValue(0, gameObj.fieldSize);
 taskDone = createFieldLine(true);
-taskDone = nextCursorPosition();
+taskDone = nextCursorPosition(false);
 
 taskDone = driverButonActivity(true);
 
