@@ -274,14 +274,8 @@ const getFieldelEmentValue = (fx, fy) => {
         fy < gameObj.fieldSize
     ) {
         line = field[fy];
-        const currBoxName = line[fx].boxName;
         const gotValue = line[fx].value;
         if (!isNaN(gotValue)) {
-            // when got, do it empty
-            line[fx].value = null;
-            field[fy] = line;
-            changeBox(0, currBoxName, null);
-
             return gotValue;
         } else {
             return "Value is empty";
@@ -312,17 +306,21 @@ const selectValue = () => {
     const x = cursorObj.x;
     const y = cursorObj.y;
 
-    console.log(x + "   cur xy    " + y);
-
     const gotValue = getFieldelEmentValue(x, y);
 
     if (!isNaN(gotValue)) {
+        // when got, do it empty
+        line = field[y];
+        const currBoxName = line[x].boxName;
+
+        line[x].value = null;
+        field[y] = line;
+        changeBox(0, currBoxName, null);
+
         taskDone = addScore(gotValue);
     } else {
-        console.log("select value error:  " + taskDone);
+        console.log("error:  " + taskDone);
     }
-
-    return;
 };
 
 const readScoreLine = (sx, sy) => {
@@ -569,6 +567,10 @@ const driverButonActivity = (isActive) => {
 
                 taskDone = createFieldLine(false);
 
+                if (cursorObj.ownerNumber) {
+                    computerTurn();
+                }
+
                 if (!taskDone) {
                     //game over
                     console.log("Game over");
@@ -581,36 +583,85 @@ const driverButonActivity = (isActive) => {
 };
 
 const maxValuePosition = () => {
-    let maxValue = minNumber;
+    let maxValue = gameObj.minNumber;
     const tempValPositions = lineStatus.valuesPositions;
     let maxPosition = -1;
+    let tempValue = 0;
+    let xTemp = cursorObj.x;
 
-    for (let i = 0; i < tempValPositions.length; i++) {
-        if (maxValue < field[tempValPositions[i]].value) {
-            maxValue = tempValPositions[i];
-            maxPosition = i;
+    tempValPositions.forEach((yPosition, index) => {
+        tempValue = getFieldelEmentValue(xTemp, yPosition);
+        if (maxValue <= tempValue) {
+            maxValue = tempValue;
+            maxPosition = tempValPositions[index];
         }
-    }
+    });
+
     return maxPosition;
+};
+
+const compTurnCounting = () => {
+    const maxPosition = maxValuePosition();
+
+    // computer AI in future
+    const choosenPosition = maxPosition;
+
+    return choosenPosition;
 };
 
 const compCursorMoveLoop = (stopPosition) => {
     const tempValPositions = lineStatus.valuesPositions;
     let answer = "loop";
-    cursorObj.yDirection = getRandomValue(0, 1) == 0 ? -1 : 1;
+
+    let stepDelay = 0;
+
+    console.log(stopPosition);
 
     for (let i = 0; i < tempValPositions.length; i++) {
-        if (stopPosition === lineStatus.valuesPositions[i]) {
+        const loopIndex = lineStatus.valuePosIndex;
+
+        if (stopPosition === lineStatus.valuesPositions[loopIndex]) {
             answer = "stop";
             break;
         }
-        setTimeout(nextCursorPosition(false), gameObj.compMoveDelay * 1000);
+        stepDelay += getRandomValue(
+            gameObj.minCompMoveDelay,
+            gameObj.maxCompMoveDelay
+        );
+        console.log(i + "  AI   " + stepDelay);
+
+        // taskDone = setTimeout(console.log("pauze " + i), stepDelay);
+
+        setTimeout(
+            (taskDone = () => {
+                console.log(
+                    i +
+                        "  " +
+                        stepDelay +
+                        "      " +
+                        loopIndex +
+                        " *** " +
+                        cursorObj.yDirection
+                );
+            }),
+            stepDelay
+        );
+
+        nextCursorPosition(false);
     }
     return answer;
 };
 
 const computerTurn = (direction) => {
-    const maxPosition = maxValuePosition();
+    const choosenPosition = compTurnCounting();
+
+    cursorObj.choosenPosition = choosenPosition;
+    const myRnd = getRandomValue(0, 2);
+    cursorObj.yDirection = myRnd == 0 ? -1 : 1;
+
+    taskDone = compCursorMoveLoop(-1); //full loop
+    taskDone = compCursorMoveLoop(choosenPosition);
+    return choosenPosition;
 };
 
 // -------------------------------------------------------------------------------------
@@ -687,7 +738,10 @@ const gameObj = {
     x0: 3,
     y0: 3,
 
-    compMoveDelay: 1, //in seconds
+    minCompMoveDelay: 300, //in miliseconds
+    maxCompMoveDelay: 1000, //in miliseconds
+
+    choosenCompPos: -1, // vetical position with cpmputer choose (max)
 };
 
 // ******************************************************************************************
@@ -737,5 +791,14 @@ taskDone = driverButonActivity(true);
 startButton.addEventListener("click", () => {
     if (!isMessage) {
         taskDone = actionOnMesage(1);
+    }
+
+    const taskas = (i) => {
+        await(2000);
+        console.log(i);
+    };
+
+    for (let i = 0; i < 10; i++) {
+        taskas(i);
     }
 });
