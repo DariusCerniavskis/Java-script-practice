@@ -26,16 +26,17 @@
                     </div>
 
                     <div class="booking-nav-wrapper">
-                        <button class="booking-btn">
-                            <h5>BOOKING NOW</h5>
-                        </button>
-
-                        <button class="burger-btn">
-                            <img
-                                src="./assests/icons/burger-btn.png"
-                                alt="two horizontal line in mobile version"
-                            />
-                        </button>
+                        <div class="book-btn-wrapper">
+                            <button>BOOK NOW</button>
+                        </div>
+                        <div class="burger-btn-wraper">
+                            <button>
+                                <img
+                                    src="./assests/icons/burger-btn.png"
+                                    alt="two horizontal line in mobile version"
+                                />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -47,6 +48,7 @@
                             <h4 class="working-period">
                                 Open 10-7pm. 7 days a week.
                             </h4>
+
                             <h4 class="phone">T. 555-555-5555</h4>
                             <h4 class="address">123 Demo Street, New York.</h4>
                         </div>
@@ -63,9 +65,10 @@
                                 <div class="service-wrapper">
                                     <div class="service-nav-wrapper">
                                         <h4>Consultatrions</h4>
-                                        <button class="service-btn" id="sb0">
-                                            <h3>+</h3>
-                                        </button>
+                                        <div class="service-navigation">
+                                            <button id="sb00">+</button>
+                                            <button id="sb01">-</button>
+                                        </div>
                                     </div>
                                     <p class="more-detaled-service" id="p0">
                                         Be clear, be confident, and don't
@@ -77,11 +80,12 @@
                                 <div class="service-wrapper">
                                     <div class="service-nav-wrapper">
                                         <h4>Custome Designs</h4>
-                                        <button class="service-btn">
-                                            <h3>+</h3>
-                                        </button>
+                                        <div class="service-navigation">
+                                            <button id="sb10">+</button>
+                                            <button id="sb11">-</button>
+                                        </div>
                                     </div>
-                                    <p class="more-detaled-service">
+                                    <p class="more-detaled-service" id="p1">
                                         Your story is what's going to separate
                                         this one from the rest.
                                     </p>
@@ -91,11 +95,12 @@
                                 <div class="service-wrapper">
                                     <div class="service-nav-wrapper">
                                         <h4>Cover-Ups</h4>
-                                        <button class="service-btn">
-                                            <h3>+</h3>
-                                        </button>
+                                        <div class="service-navigation">
+                                            <button id="sb20">+</button>
+                                            <button id="sb21">-</button>
+                                        </div>
                                     </div>
-                                    <p class="more-detaled-service">
+                                    <p class="more-detaled-service" id="p2">
                                         The beauty of your story is that it's
                                         going to continue to evolve.
                                     </p>
@@ -104,7 +109,7 @@
                                 <div class="line"><hr /></div>
 
                                 <button class="visit-btn">
-                                    <h5>SCHEDULE A VISIT</h5>
+                                    SCHEDULE A VISIT
                                 </button>
                             </div>
 
@@ -119,29 +124,29 @@
 
                     <section>
                         <div class="booking-section-wrapper">
-                            <div class="booking-wrapper vaze-img-wrapper">
-                                <div>0</div>
-                                <!-- <img
+                            <div class="vaze-wrapper">
+                                <img
                                     src="./assests/images/booking0.jpg"
                                     alt="black vase in front of white wall"
-                                /> -->
+                                />
                             </div>
-                            <article
-                                class="booking-wrapper booking-art-wrapper"
-                            >
-                                <h3>BOOKING</h3>
-                                <p>
-                                    Be clear, be confident, and don't overthink
-                                    it. The beauty of your story is that it's
-                                    going to continue to evolve.
-                                </p>
+                            <article class="booking-art-wrapper">
+                                <div class="booking-meniu-wrapper">
+                                    <h3>BOOKING</h3>
+                                    <p>
+                                        Be clear, be confident, and don't
+                                        overthink it. The beauty of your story
+                                        is that it's going to continue to
+                                        evolve.
+                                    </p>
 
-                                <button class="booking-btn">
-                                    <h4>BOOK NOW</h4>
-                                </button>
+                                    <button class="booking-btn">
+                                        BOOK NOW
+                                    </button>
+                                </div>
                             </article>
 
-                            <div class="booking-wrapper tatoo-img-wrapper">
+                            <div class="tatoo-wrapper">
                                 <img
                                     src="./assests/images/booking1.jpg"
                                     alt="black vase in front of white wall"
@@ -149,45 +154,47 @@
                             </div>
                         </div>
                     </section>
-
-                    <footer>
-                        <div class="footer-wrapper">
-                            <h2 class="logo">ACHROMATIC ATATTOOS</h2>
-
-                            <div class="footer-nav-wrapper">
-                                <ul>
-                                    <li>
-                                        <a href="#">
-                                            <img
-                                                src="./assests/icons/facebook.png"
-                                                alt="facebook icon"
-                                            />
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="#">
-                                            <img
-                                                src="./assests/icons/instagram.png"
-                                                alt="instagram icon"
-                                            />
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="#">
-                                            <img
-                                                src="./assests/icons/twitter.png"
-                                                alt="Twitter icon"
-                                            />
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </footer>
                 </div>
             </main>
+
+            <footer>
+                <div class="footer-wrapper">
+                    <div class="logo">
+                        <h2>ACHROMATIC TATTOOS</h2>
+                    </div>
+
+                    <div class="footer-nav-wrapper">
+                        <ul>
+                            <li>
+                                <a href="#">
+                                    <img
+                                        src="./assests/icons/facebook.png"
+                                        alt="facebook icon"
+                                    />
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#">
+                                    <img
+                                        src="./assests/icons/instagram.png"
+                                        alt="instagram icon"
+                                    />
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#">
+                                    <img
+                                        src="./assests/icons/twitter.png"
+                                        alt="Twitter icon"
+                                    />
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
         </div>
 
         <script src="./javaScript.js"></script>

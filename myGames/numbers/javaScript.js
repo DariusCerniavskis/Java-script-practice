@@ -181,17 +181,19 @@ const nextCursorPosition = (isNearest) => {
     let tempDirect = 0;
     let newIndex = 0;
     const tempValPosIndex = lineStatus.valuePosIndex;
-    const tempOwnerNumber=cursorObj.ownerNumber
-    const tempValPosLenght=lineStatus.valuesPositions.length
-    let tempActiveValPos=0
+    const tempOwnerNumber = cursorObj.ownerNumber;
+    const tempValPosLenght = lineStatus.valuesPositions.length;
+    let tempActiveValPos = 0;
 
     if (cursorObj.xDirection + cursorObj.yDirection) {
         //move
 
         if (tempOwnerNumber) {
             tempDirect = cursorObj.yDirection;
+            tempActiveValPos = cursorObj.yNew;
         } else {
             tempDirect = cursorObj.xDirection;
+            tempActiveValPos = cursorObj.xNew;
         }
 
         if (tempDirect < 0) {
@@ -215,7 +217,7 @@ const nextCursorPosition = (isNearest) => {
                 cursorObj.yNew,
                 tempDirect
             );
-            tempActiveValPos=cursorObj.yNew
+            tempActiveValPos = cursorObj.yNew;
         } else {
             cursorObj.xNew = lineStatus.valuesPositions[newIndex];
             cursorObj.xBorderOut = checkIsBorderOut(
@@ -223,36 +225,33 @@ const nextCursorPosition = (isNearest) => {
                 cursorObj.xNew,
                 tempDirect
             );
-           tempActiveValPos=cursorObj.xNew            
+            tempActiveValPos = cursorObj.xNew;
         }
 
-        if (isNearest){
+        if (isNearest) {
             // Delete hole in line
-            let tempValuePositions=[];
-            let j=0;
+            let tempValuePositions = [];
+            let j = 0;
 
-            for (let i=0;i<tempValPosLenght;i++){
-                if (tempActiveValPos===lineStatus.valuesPositions[i]){
-                   lineStatus.valuePosIndex=j 
+            for (let i = 0; i < tempValPosLenght; i++) {
+                if (tempActiveValPos === lineStatus.valuesPositions[i]) {
+                    lineStatus.valuePosIndex = j;
                 }
 
-                if(i!==tempValPosIndex){
+                if (i !== tempValPosIndex) {
                     tempValuePositions.push(lineStatus.valuesPositions[i]);
-                    j++
+                    j++;
                 }
-                
- 
             }
-            lineStatus.valuesPositions=tempValuePositions
-        } else{
-            lineStatus.valuePosIndex=newIndex
+            lineStatus.valuesPositions = tempValuePositions;
+        } else {
         }
-
+        lineStatus.valuePosIndex = newIndex;
     }
 
     //check borders
     // in future will do mooving
-     moveCursor();
+    moveCursor();
 };
 
 const moveCursor = () => {
@@ -351,7 +350,6 @@ const readScoreLine = (sx, sy) => {
 };
 
 const getNearestPosition = (positions, currPos) => {
-
     let curPosIndex = 0;
     let nearestSmaller = gameObj.fieldSize; //max
     let nearestBigger = gameObj.fieldSize; //max
@@ -416,25 +414,30 @@ const getNearestPosition = (positions, currPos) => {
 const createFieldLine = (isFirstTime) => {
     const tempOwnNmb = cursorObj["ownerNumber"];
     let tempValuePositions = [];
-    let tempValPosIndex = 0;
+    let tempValPosIndex = 0; //position in line without holes
+    let tempValPos = 0; //posisition in field
 
     if (tempOwnNmb) {
-        tempValPosIndex = isFirstTime ? cursorObj.yNew : cursorObj.y;
+        tempValPos = isFirstTime ? cursorObj.yNew : cursorObj.y;
     } else {
-        tempValPosIndex = isFirstTime ? cursorObj.xNew : cursorObj.x;
+        tempValPos = isFirstTime ? cursorObj.xNew : cursorObj.x;
     }
 
     scoreLine = readScoreLine(cursorObj.x, cursorObj.y);
 
+    j = 0;
     for (let i = 0; i < gameObj.fieldSize; i++) {
-        if (scoreLine[i] !== null || i===tempValPosIndex) {
+        if (i === tempValPos) {
+            tempValPosIndex = j;
+        }
+
+        if (scoreLine[i] !== null || i === tempValPos) {
             tempValuePositions.push(i);
+            j++;
         }
     }
 
-
-
-    if (tempValuePositions.length>1) {
+    if (tempValuePositions.length > 1) {
         lineStatus.valuesPositions = tempValuePositions;
         lineStatus.valuePosIndex = tempValPosIndex;
         lineStatus.verticalPlane = !!tempOwnNmb;
@@ -453,7 +456,7 @@ const createFieldLine = (isFirstTime) => {
                 cursorObj.yDirection = 0;
             }
         }
-        nextCursorPosition(true)
+        nextCursorPosition(true);
 
         return 0; //Game status paly
     } else {
@@ -573,13 +576,12 @@ const driverButonActivity = (isActive) => {
 
         selectButton.addEventListener("click", () => {
             if (!isMessage) {
-
                 taskDone = selectValue();
                 cursorObj.ownerNumber = 1 - cursorObj.ownerNumber;
 
                 taskDone = createFieldLine(false);
 
-                if (!taskDone ) {
+                if (!taskDone) {
                     //game over
                     console.log("Game over");
                 }
