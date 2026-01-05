@@ -42,18 +42,69 @@ console.log("Task3: Formated array");
 console.log(mappedUsers);
 
 // Task4
-const topUsers = [];
-topUsers.push(users[0]);
-topUsers.push(users[1]);
+const topUsers = users.filter((user, index) => {
+    if (index < 2) {
+        return user;
+    }
+});
 
 console.log("Task4: Get top 2 users");
 console.log(topUsers);
 
 // Task 5
 
-const modifiedUsers = topUsers.map((user, index) => {
+const modifiedUsers = [...topUsers].map((user, index) => {
     return { ...user, rank: index + 1 };
 });
 
 console.log("Task5: Add rank to top 2 users");
 console.log(modifiedUsers);
+
+// ****************************************************************************************
+
+const anotherUsers = [
+    { id: 1, name: "Lina" },
+    { id: 2, name: "Tomas" },
+    { id: 3, name: "Greta" },
+];
+
+const orders = [
+    { userId: 1, item: "Phone" },
+    { userId: 2, item: "Laptop" },
+    { userId: 1, item: "Charger" },
+];
+
+const existingItems = ["Phone", "Table", "Mouse"];
+
+// Task6
+
+const newOrders = [...orders].map((order) => {
+    const isProductExist = existingItems.some((existingItem) => {
+        return existingItem === order.item;
+    });
+    return {
+        ...order,
+        isProductExist: isProductExist,
+    };
+});
+
+console.log(
+    "Task6: Add isProductExist (true / False) if exist in existingItems"
+);
+console.log(newOrders);
+
+// Task7
+
+const UsersAndOrders = [...anotherUsers].map((user) => {
+    const userItem = [...orders].reduce((acc, curr) => {
+        return curr.userId == user.id ? [...acc, curr.item] : acc;
+    }, []);
+
+    return {
+        name: user.name,
+        item: userItem,
+    };
+});
+
+console.log("Task7: Add users and orders");
+console.log(UsersAndOrders);
