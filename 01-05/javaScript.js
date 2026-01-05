@@ -22,7 +22,7 @@ console.log(filteredUsers2);
 
 // Task2
 
-const sortedUsers = [...filteredUsers].sort((a, b) => {
+const sortedUsers = [...filteredUsers1].sort((a, b) => {
     return b.score - a.score;
 });
 
@@ -40,3 +40,20 @@ const mappedUsers = [...users].map((user) => {
 
 console.log("Task3: Formated array");
 console.log(mappedUsers);
+
+// Task4
+const topUsers = [];
+topUsers.push(users[0]);
+topUsers.push(users[1]);
+
+console.log("Task4: Get top 2 users");
+console.log(topUsers);
+
+// Task 5
+
+const modifiedUsers = topUsers.map((user, index) => {
+    return { ...user, rank: index + 1 };
+});
+
+console.log("Task5: Add rank to top 2 users");
+console.log(modifiedUsers);
