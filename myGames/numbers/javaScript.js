@@ -235,7 +235,7 @@ const nextCursorPosition = (isNearest) => {
 
             for (let i = 0; i < tempValPosLenght; i++) {
                 if (tempActiveValPos === lineStatus.valuesPositions[i]) {
-                    lineStatus.valuePosIndex = j;
+                    newIndex = j;
                 }
 
                 if (i !== tempValPosIndex) {
@@ -244,7 +244,6 @@ const nextCursorPosition = (isNearest) => {
                 }
             }
             lineStatus.valuesPositions = tempValuePositions;
-        } else {
         }
         lineStatus.valuePosIndex = newIndex;
     }
@@ -349,8 +348,7 @@ const readScoreLine = (sx, sy) => {
     return tempScoreLine;
 };
 
-const getNearestPosition = (positions, currPos) => {
-    let curPosIndex = 0;
+const getNearestPosition = (positions, currPos, curPosIndex) => {
     let nearestSmaller = gameObj.fieldSize; //max
     let nearestBigger = gameObj.fieldSize; //max
     let distSmaler = gameObj.fieldSize; //max
@@ -359,17 +357,6 @@ const getNearestPosition = (positions, currPos) => {
     let biggerInField = false;
 
     const CountPositions = positions.length;
-
-    // const positions = [...tempPositions].sort((a, b) => {
-    //     return a - b; //min to max
-    // });
-
-    for (let i = 0; i < CountPositions; i++) {
-        if (currPos === positions[i]) {
-            curPosIndex = i;
-            break;
-        }
-    }
 
     smallerInField = !!curPosIndex;
     if (smallerInField) {
@@ -445,6 +432,7 @@ const createFieldLine = (isFirstTime) => {
         if (!isFirstTime) {
             lineStatus.nearestDirection = getNearestPosition(
                 tempValuePositions,
+                tempValPos,
                 tempValPosIndex
             );
 
@@ -592,6 +580,39 @@ const driverButonActivity = (isActive) => {
     }
 };
 
+const maxValuePosition = () => {
+    let maxValue = minNumber;
+    const tempValPositions = lineStatus.valuesPositions;
+    let maxPosition = -1;
+
+    for (let i = 0; i < tempValPositions.length; i++) {
+        if (maxValue < field[tempValPositions[i]].value) {
+            maxValue = tempValPositions[i];
+            maxPosition = i;
+        }
+    }
+    return maxPosition;
+};
+
+const compCursorMoveLoop = (stopPosition) => {
+    const tempValPositions = lineStatus.valuesPositions;
+    let answer = "loop";
+    cursorObj.yDirection = getRandomValue(0, 1) == 0 ? -1 : 1;
+
+    for (let i = 0; i < tempValPositions.length; i++) {
+        if (stopPosition === lineStatus.valuesPositions[i]) {
+            answer = "stop";
+            break;
+        }
+        setTimeout(nextCursorPosition(false), gameObj.compMoveDelay * 1000);
+    }
+    return answer;
+};
+
+const computerTurn = (direction) => {
+    const maxPosition = maxValuePosition();
+};
+
 // -------------------------------------------------------------------------------------
 
 // varables
@@ -665,6 +686,8 @@ const gameObj = {
     cursorBorder: 3,
     x0: 3,
     y0: 3,
+
+    compMoveDelay: 1, //in seconds
 };
 
 // ******************************************************************************************
