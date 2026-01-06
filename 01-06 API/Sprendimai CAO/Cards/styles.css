@@ -4,28 +4,38 @@
     box-sizing: border-box;
 }
 
-
-.page-wrapper{
-    
-}
-
-
 .main-wrapper {
-    width: 300px;
+    width: 700px;
+
+    display: flex;
+    justify-content: center;
 
     padding-top: 2rem;
     padding-left: 4rem;
     padding-right: 4rem;
+}
+
+.card-wrapper {
+    width: 60%;
+    height: auto;
+
+    padding: 1rem;
+
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     gap: 1rem;
+
+    background-color: bisque;
+}
+
+.image-wrapper {
+    width: 100%;
+    margin-bottom: 2rem;
 }
 
 .user-image {
-    height: 300px;
-
+    width: 100%;
     object-fit: cover;
 }
 
@@ -34,8 +44,6 @@
 
     display: flex;
     justify-content: space-between;
-
-    background-color: aqua;
 }
 
 .user-age {
@@ -43,6 +51,6 @@
 }
 
 .user-email {
-    columns: grey;
-    background-color: chartreuse;
+    width: 100%;
+    color: grey;
 }
