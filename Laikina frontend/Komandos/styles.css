@@ -1,0 +1,285 @@
+/* selectoriai pagal prioriteto didėjimą */
+
+* {
+} /* visitegai */
+
+div {
+} /* visi div'ai */
+
+.selector {
+} /* visi tegai, kurie turi class="selector" */
+
+#selector {
+} /* visi tegai turintys ID="selector"*/
+
+/* stilius pačiame tege <div style="width:200px ;"></div> */
+
+/* ------------------------------------------------------------ */
+/* paraščių pašalinimas pradžioje */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* plotis su parastėmis */
+}
+
+/* Matavimo vienetai */
+div {
+    height: 1vh; /* 1 % matomo lango */
+    height: 1px; /* 1 pikselis  */
+    height: 1rem; /*  raidės dydis (def 16 px) */
+}
+
+/* kintamieji (konstantos) */
+:root {
+    --variable: 100px;
+}
+
+/* Listas */
+ul {
+    list-style: none; /* panaikina taškus */
+}
+
+ul li::marker {
+    color: green; /* change color of markers */
+}
+
+/* ---------------------------------------------------------------- */
+/* BUTTON */
+button {
+    all: unset; /* visų stilių panaikinimas */
+
+    cursor: pointer; /* užvedus kursorius pasikeičia ranka */
+}
+button:hover {
+} /* veiksmai užvedus ant mygtuko */
+
+button:active {
+    /* veiksmai paspaudus */
+    zoom: 110%; /* padidinimas */
+    scale: 1; /* padidėja centruotai */
+    transition: 60; /* pokyčio trukmė */
+}
+
+/* **************************************************** */
+/* ---------------------------------------------------- */
+/* TEXT */
+h1 {
+    all: unset; /* panaikina visus stilius */
+    text-decoration: none; /* panaikina B U I */
+    text-decoration: underline; /* pbraukimas U*/
+
+    font-size: 16px; /* standartinis šrifto dydis (rem)  */
+    font-weight: 900; /* storis 100 - 900  */
+    letter-spacing: 1px; /* trapas tarp raidžių  */
+    line-height: 1.1rem; /* tarpas + raidės aukštis  */
+    text-align: center; /* teksto eilutės centravimas hor  */
+    line-height: 100%; /*  eilutės centravimas verikaliai */
+}
+
+/* jei tekstas nukrito apačion, box'ui reikia parašti: */
+div {
+    vertical-align: middle;
+}
+
+/* TEKSTO SANTRAUKA IŠ 2 EILUČIŲ... */
+div {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 34px; /* Adjust based on your line-height */
+    line-height: 1.1rem;
+}
+
+/* nNestandartinio šrifto integracija */
+/* viršuje: */
+@font-face {
+    font-family: "Srifto-pavadinimas", serif;
+    src: url("./assests/fonts/Avro/Arvo-Bold.ttf");
+}
+
+body {
+    font-family: "Srifto-pavadinimas", cursive; /* šrifto pavadinimas */
+    font-optical-sizing: auto; /* dydis */
+    font-weight: weight; /* storis */
+    font-style: normal; /* stilius */
+}
+
+/* *************************************************** */
+/* ----------------------------------------------------- */
+/* BOX'AS */
+div {
+    border: 1px solid blue; /* storis, linija (solid, dashed, dotted) spalva */
+
+    /* paveiksliukas fone */
+    background-image: url("kelias"); /* fono paveikslėlis */
+    background-position: center; /* pozicija */
+    background-repeat: no-repeat; /* nekartoti */
+    background-size: contain; /* užpildymas: contain - suspaudžia, cover- apkarpo viršų ir apačią */
+
+    /* Kontrastingas fonas */
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+        url("Kelias") center/cover no-repeat;
+
+    vertical-align: middle; /* vertikalus stumdymas */
+
+    overflow: hidden; /* kas užeina už ribų - paslėpti  */
+
+    margin: 10px 20px; /* box atitraukimas 10 hor, 20 ver  */
+
+    width: 100%; /*  100 % tėvinio elemento */
+    width: fit-content; /* nurodžius kelioms dėžutėms, plotis po lygiai */
+
+    object-fit: fill; /* (def)  ištampo po visą box (iškreiptas vaizdas)  */
+    object-fit: contain; /* didina, kol vienas iš matmenų neužpildo box  */
+    object-fit: cover; /* didina, kol užpildomas box, kas per daug - nukerpa  */
+
+    min-width: 100px; /* minimalus plotis */
+
+    /* ---------------------------------------------- */
+    /* Object in box */
+}
+
+div img {
+    opacity: 0.5; /* paveiksliuko skaidrumas 0 ... 1  */
+    min-width: 0; /* pav mažėja iki 0, nenusimuša tarpai */
+}
+
+/* ******************************************************* */
+/* ------------------------------------------------------- */
+/* FLEX */
+.container {
+    /* horizontalus flex */
+    display: flex;
+    flex-direction: row; /* default */
+    justify-content: center; /* lygiavimas hor */
+    /* start - kairė, end - dešinė, */
+    /* space-beteen - max išplėsta */
+    /* space-arround - vienodi tarpai (tarp elementų *2 (1__2) */
+    /* space-evently - vienodi tarpai (tarp elementų *1 (1_2)*/
+
+    align-items: center; /* lygiavimas vertikaliai  */
+    flex-wrap: wrap; /* kas netelpa vienoje eilutėje - pereinaį kitą */
+
+    /* vertikalus flex */
+    display: flex;
+    flex-direction: column; /* verikalus flex */
+    justify-content: center; /* vertikalus lygiavimas */
+    align-items: center; /* horizontalus lygiavimas */
+}
+
+/* Atskiro elemento lygiavimas */
+.elementas:last-child {
+    /* taikoma paskutiniam elementui */
+    justify-self: center; /*  elemento lygiavimas hor */
+    align-self: center; /* elemento lygiavimas vert */
+
+    flex: 0; /* (def) užima  tiek kiek reikia */
+    flex: 1; /* užima max */
+    flex-grow: 2; /* aukščio / pločio dvigubinimas */
+}
+
+/* KORTELIŲ STANDARTINIS IŠDĖSTYMAS */
+.container {
+    display: flex;
+}
+
+/* teksto (antraštė, paragrafas, mygtukas) lygiavimas */
+.card {
+    flex: 1; /* grid 1fr 1fr... */
+    flex-grow: 1;
+}
+.card p {
+    flex-grow: 1; /* išlygiuoja 3 elementus  */
+}
+
+/* ******************************************************* */
+/* ------------------------------------------------------- */
+/* GRID */
+.container {
+    /* horizontalus flex */
+    display: grid;
+    /* 1fr - užima visą plotį, auto - užima tik tiek, kiek reikia teksti */
+    /* dalinama tik per pusę po lygiai */
+    grid-template-columns: 1fr 1fr;
+
+    /* box gap box  (width: npx;)*/
+    grid-template-columns: 2fr 1fr;
+    /* <=box=> gap box  (width: 100%;)*/
+    grid-template-columns: 2fr 1fr;
+
+    /* vertikalus grid */
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+
+    /* grid area */
+    /* ver start / hor start / ver end / hor end */
+    /* ver start / hor start / aukš (split n) / plot (split n) */
+    width: 100%;
+    /* box box box */
+    grid-template-columns: 1fr 1fr 1fr;
+    /* <=box=> box */
+    /* box */
+    grid-area: 1 / 1 / 3;
+}
+
+/* KORTELIŲ STANDARTINIS IŠDĖSTYMAS */
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* teksto (antraštė, paragrafas, mygtukas) lygiavimas */
+.card {
+    grid-template-rows: auto 1fr auto;
+}
+
+/* ****************************************************** */
+/* Objekto stumdymas */
+.element {
+    position: static; /* def, griežtai pririštas */
+    position: relative; /* plaukioja neužleisdamas savo vietos */
+    position: absolute; /* plaukioja prisirišęs prie tėvinio elemento */
+    position: fixed; /* pririštas prie ekrano */
+    /* margin analogas (atskaita vykdoma nuo objekto krašto) */
+    left: 100px; /* 100 juda dešinėn palei kairį kraštą*/
+    top: 100px; /* 100px juda apačion pagal viršų */
+    bottom: 100px; /* 100px juda viršun pagal apačią */
+    right: 100px; /* 100px juda kairėn pagal desini krasta */
+
+    /* objekto centravimas stumdymui */
+    transform: translateX(-50%); /* 1/2 korpuso < */
+    transform: translateY(-50%); /* 1/2 korpuso ^ */
+    /*  arba (x,y) */
+    transform: translate(-50%, -50%);
+
+    z-index: -1; /* <0 behind, in front of  */
+}
+
+/* **************************************************************** */
+/* Animacija */
+.object {
+    animation-name: Animacijos-pavadinimas;
+    animation-duration: 2s; /* animacijos trukmė */
+    animation-fill-mode: forwards; /* po animacijos likti paskutinėje pozicijoje */
+    animation-iteration-count: 3; /* karojimų skaičius (infinite - nuolat)*/
+    animation-delay: 2s; /* animacijos uždelsimas */
+    animation-timing-function: linear; /* greičio grafikas */
+    /* linear - pastovus, easy-out - lėčiausia per vidurį, */
+    /* easy-in - greičiausia per vidurį,  */
+    /* easy-in-out lėčiausia 1/4, norma 1/2 greičiausia 3/4  */
+    /* easy  - kaip easy-out, tik pagreitėjimas vėliau ir didesnis */
+}
+/* Animacijos funkcija */
+@keyframes Animacijos-pavadinimas {
+    0% {
+        /* CSS  komandos (startas)*/
+    }
+    50% {
+        /* CSS komandos (vidurys) */
+    }
+    100% {
+        /* CSS komandos (Finišas) */
+    }
+}

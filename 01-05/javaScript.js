@@ -42,11 +42,9 @@ console.log("Task3: Formated array");
 console.log(mappedUsers);
 
 // Task4
-const topUsers = users.filter((user, index) => {
-    if (index < 2) {
-        return user;
-    }
-});
+const topUsers=users.slice(0,1)
+
+
 
 console.log("Task4: Get top 2 users");
 console.log(topUsers);
