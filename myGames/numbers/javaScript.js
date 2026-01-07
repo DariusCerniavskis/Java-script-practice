@@ -4,7 +4,7 @@ const leftButton = document.getElementById("leftBtn");
 const rightButton = document.getElementById("rightBtn");
 const selectButton = document.getElementById("selectBtn");
 
-const gameLevel = document.getElementById("gameLevel");
+const lblGameLevel = document.getElementById("gameLevel");
 
 const tablePlayersHTML = [
     {
@@ -52,6 +52,51 @@ const messageObj = {
 const startButton = document.getElementById("startBtn");
 
 // *****************************************************************
+// ASYNC FUNCTIONS
+async function compCursorMoveLoop(stopPosition) {
+    const tempValPositions = lineStatus.valuesPositions;
+    let answer = "loop";
+
+    const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
+
+    console.log(stopPosition);
+
+    for (let i = 0; i < tempValPositions.length; i++) {
+        const loopIndex = lineStatus.valuePosIndex;
+
+        if (stopPosition === lineStatus.valuesPositions[loopIndex]) {
+            answer = "stop";
+            break;
+        }
+
+        nextCursorPosition(false);
+        // await sleep(1);
+
+        rndDelay(i);
+    }
+}
+
+async function selectAnimation() {
+    // selectAnimation2(cursorObj.size);
+
+    for (let i = cursorObj.size; i > 20; i--) {
+        moveCursor(i);
+        // rndDelay(i);
+        // await sleep(1);
+    }
+}
+
+function selectAnimation2(i) {
+    if (i > 20) {
+        moveCursor(i);
+        rndDelay(i);
+        i--;
+
+        // Schedule the next iteration for the next screen refresh
+        requestAnimationFrame(selectAnimation2(i));
+    }
+}
+
 // FUNCTIONS
 
 const tableInitialization = () => {
@@ -76,6 +121,24 @@ const getRandomValue = (min, max) => {
     return rndValue;
 };
 
+const rndDelay = (speederIndex) => {
+    // 0.2 sec  30000  (fastest)
+    //  2 sec   40000   (slowest)
+    const interval =
+        getRandomValue(0, Math.round(25000 / (speederIndex + 1))) + 22000;
+
+    console.log(interval);
+
+    for (let a = 0; a < interval; a++) {
+        c = 1;
+        for (let b = 1; b < a; b++) {
+            c = c * b;
+            if (c > 100000) {
+                c = 1;
+            }
+        }
+    }
+};
 const convertToCode = (number) => {
     return number > 9 ? String(number) : "0" + number;
 };
@@ -86,9 +149,10 @@ const getBoxCode = (boxLine, boxColumn) => {
 
 const fillArray = (maxFieldSize) => {
     let tempObject = {};
-    const tempField = [];
+    field = [];
 
     for (let i = 0; i < maxFieldSize; i++) {
+        line = [];
         for (let j = 0; j < maxFieldSize; j++) {
             // box object
             // value
@@ -101,10 +165,10 @@ const fillArray = (maxFieldSize) => {
 
             line.push(tempObject);
         }
-        tempField.push(line);
-        line = [];
+        field.push(line);
     }
-    return tempField;
+
+    return;
 };
 
 const changeBox = (getActionCode, boxName, par1) => {
@@ -114,6 +178,7 @@ const changeBox = (getActionCode, boxName, par1) => {
     // 2- box size      (par1 = height)
 
     const currentBox = document.getElementById(boxName);
+    console.log(currentBox);
 
     if (getActionCode == 0) {
         if (!isNaN(par1)) {
@@ -144,6 +209,7 @@ const changeBoxesGroup = (getActionCode, fieldSize, maxFieldSize, par1) => {
     const loopFieldSize = getActionCode == 0 ? maxFieldSize : fieldSize;
 
     for (let i = 0; i < loopFieldSize; i++) {
+        console.log(field);
         line = field[i];
         for (let j = 0; j < loopFieldSize; j++) {
             if (getActionCode == 0) {
@@ -253,17 +319,36 @@ const nextCursorPosition = (isNearest) => {
     moveCursor();
 };
 
-const moveCursor = () => {
-    cursorObj.xpx = gameObj.x0 + getCoord(cursorObj.xNew);
-    cursorObj.ypx = gameObj.y0 + getCoord(cursorObj.yNew);
+const moveCursor = (curSize = 0) => {
+    let strxpx = "";
+    let strypx = "";
+    let strSize = "";
+    if (!curSize) {
+        cursorObj.xpx = gameObj.x0 + getCoord(cursorObj.xNew);
+        cursorObj.ypx = gameObj.y0 + getCoord(cursorObj.yNew);
 
-    cursorBox.style.left = `${cursorObj.xpx}px`;
-    cursorBox.style.top = `${cursorObj.ypx}px`;
-    const currentColor = cursorColor[cursorObj.ownerNumber];
-    cursorBox.style.borderColor = currentColor;
+        strxpx = `${cursorObj.xpx}px`;
+        strypx = `${cursorObj.ypx}px`;
 
-    cursorObj.x = cursorObj.xNew;
-    cursorObj.y = cursorObj.yNew;
+        strSize = `${cursorObj.size}px`;
+
+        const currentColor = cursorColor[cursorObj.ownerNumber];
+        cursorBox.style.borderColor = currentColor;
+
+        cursorObj.x = cursorObj.xNew;
+        cursorObj.y = cursorObj.yNew;
+    } else {
+        const selectionStep = Math.round((cursorObj.size - curSize) / 2);
+        strxpx = `${cursorObj.xpx + selectionStep}px`;
+        strypx = `${cursorObj.ypx + selectionStep}px`;
+
+        strSize = `${curSize}px`;
+    }
+
+    cursorBox.style.left = strxpx;
+    cursorBox.style.top = strypx;
+    cursorBox.style.height = strSize;
+    cursorBox.style.width = strSize;
 };
 
 const getFieldelEmentValue = (fx, fy) => {
@@ -310,6 +395,8 @@ const selectValue = () => {
 
     if (!isNaN(gotValue)) {
         // when got, do it empty
+        selectAnimation();
+
         line = field[y];
         const currBoxName = line[x].boxName;
 
@@ -481,6 +568,11 @@ const actionOnMesage = (msgType) => {
         isMessage = true;
         let clickYes = 0;
 
+        playersObj[0].allScores =
+            playersObj[0].allScores + playersObj[0].playerScores;
+        playersObj[1].allScores =
+            playersObj[1].allScores + playersObj[1].playerScores;
+
         messageObj.currScores[0].playerName.textContent =
             playersObj[0].playerName;
         messageObj.currScores[0].playerScores.textContent =
@@ -537,7 +629,7 @@ const driverButonActivity = (isActive) => {
                 } else {
                     // vertical
                     cursorObj.xDirection = 0;
-                    cursorObj.yDirection = -1;
+                    cursorObj.yDirection = gameObj.oponentComputer ? 0 : -1;
                 }
 
                 taskDone = nextCursorPosition(false);
@@ -553,7 +645,7 @@ const driverButonActivity = (isActive) => {
                 } else {
                     // vertical
                     cursorObj.xDirection = 0;
-                    cursorObj.yDirection = 1;
+                    cursorObj.yDirection = gameObj.oponentComputer ? 0 : 1;
                 }
 
                 taskDone = nextCursorPosition(false);
@@ -565,15 +657,13 @@ const driverButonActivity = (isActive) => {
                 taskDone = selectValue();
                 cursorObj.ownerNumber = 1 - cursorObj.ownerNumber;
 
-                taskDone = createFieldLine(false);
-
-                if (cursorObj.ownerNumber) {
-                    computerTurn();
-                }
-
-                if (!taskDone) {
-                    //game over
-                    console.log("Game over");
+                tempGameStatus = createFieldLine(false);
+                if (!tempGameStatus) {
+                    taskDone = EndLevel();
+                } else {
+                    if (cursorObj.ownerNumber) {
+                        computerTurn();
+                    }
                 }
             }
         });
@@ -609,49 +699,6 @@ const compTurnCounting = () => {
     return choosenPosition;
 };
 
-const compCursorMoveLoop = (stopPosition) => {
-    const tempValPositions = lineStatus.valuesPositions;
-    let answer = "loop";
-
-    let stepDelay = 0;
-
-    console.log(stopPosition);
-
-    for (let i = 0; i < tempValPositions.length; i++) {
-        const loopIndex = lineStatus.valuePosIndex;
-
-        if (stopPosition === lineStatus.valuesPositions[loopIndex]) {
-            answer = "stop";
-            break;
-        }
-        stepDelay += getRandomValue(
-            gameObj.minCompMoveDelay,
-            gameObj.maxCompMoveDelay
-        );
-        console.log(i + "  AI   " + stepDelay);
-
-        // taskDone = setTimeout(console.log("pauze " + i), stepDelay);
-
-        setTimeout(
-            (taskDone = () => {
-                console.log(
-                    i +
-                        "  " +
-                        stepDelay +
-                        "      " +
-                        loopIndex +
-                        " *** " +
-                        cursorObj.yDirection
-                );
-            }),
-            stepDelay
-        );
-
-        nextCursorPosition(false);
-    }
-    return answer;
-};
-
 const computerTurn = (direction) => {
     const choosenPosition = compTurnCounting();
 
@@ -659,17 +706,97 @@ const computerTurn = (direction) => {
     const myRnd = getRandomValue(0, 2);
     cursorObj.yDirection = myRnd == 0 ? -1 : 1;
 
-    taskDone = compCursorMoveLoop(-1); //full loop
+    // taskDone = compCursorMoveLoop(-1); //full loop
     taskDone = compCursorMoveLoop(choosenPosition);
-    return choosenPosition;
+    // selectButton.click();
+    return;
+};
+
+const EndLevel = () => {
+    if (gameObj.playerAction > 0) {
+        // yes
+        if (gameObj.gameStatus > 0) {
+            // win, next level
+            gameObj.level++;
+        } else {
+            // lost, repeat
+            gameObj.level = 1;
+        }
+        taskDone = startGame();
+        return true;
+    } else {
+        // end game
+        return false;
+    }
+};
+
+const startGame = () => {
+    lblGameLevel.textContent = gameObj.level;
+
+    if (gameObj.fieldSize < gameObj.maxFieldSize) {
+        // level up
+        if (gameObj.level < 9) {
+            gameObj.fieldSize = gameObj.level + 2;
+        }
+    }
+
+    taskDone = fillArray(gameObj.maxFieldSize);
+
+    // write values and hide
+    taskDone = changeBoxesGroup(0, gameObj.fieldSize, gameObj.maxFieldSize);
+
+    actionOnMesage(0);
+
+    // box size
+    // change height
+    boxSize = Math.floor(500 / gameObj.fieldSize);
+
+    // make boxes
+    taskDone = changeBoxesGroup(
+        2,
+        gameObj.fieldSize,
+        gameObj.maxFieldSize,
+        `${boxSize}px`
+    );
+    cursorObj.size = boxSize - 2 * gameObj.cursorBorder;
+    cursorBox.style.height = `${cursorObj.size}px`;
+    cursorBox.style.width = `${cursorObj.size}px`;
+
+    // hide the message box
+    taskDone = actionOnMesage(0);
+
+    playersObj[0].playerScores = 0;
+    playersObj[0].palyerStatus = 0;
+    playersObj[1].playerScores = 0;
+    playersObj[1].palyerStatus = 0;
+
+    taskDone = tableInitialization();
+
+    // fill the cursorObject
+
+    cursorObj.ownerNumber = 0;
+    cursorObj.fieldBoxSize = boxSize;
+
+    // START
+
+    cursorObj.xNew = getRandomValue(0, gameObj.fieldSize);
+    cursorObj.yNew = getRandomValue(0, gameObj.fieldSize);
+    taskDone = createFieldLine(true);
+    taskDone = nextCursorPosition(false);
+
+    taskDone = driverButonActivity(true);
 };
 
 // -------------------------------------------------------------------------------------
 
 // varables
 let taskDone;
+let stepDelay = 0; // delay when move computer
+let boxSize = 0;
+let tempGameStatus = 0; //-1 lost, 0- paly, 1- win
 
 let isMessage = false;
+let field = [];
 let line = [];
 
 rndInit();
@@ -693,6 +820,7 @@ let cursorObj = {
         "yellow", //palyer cursor colour
         "red", //oponent cursor color
     ],
+    size: 0,
 };
 
 cursorObj.xDirection = 0;
@@ -729,76 +857,41 @@ const gameObj = {
     //0-Continue,  -2 lost exit,-1 lost, again, 1- win
     gameStatus: 0, //-1 lost, 0- paly, 1- win
     playerAction: 0, //-1 exit, 0- current play, 1- another game
-    minNumber: -15,
-    maxNumber: 15,
+    minNumber: -3,
+    maxNumber: 8,
     maxFieldSize: 10,
-    fieldSize: 5,
+    fieldSize: 3,
+    level: 1,
+    oponentComputer: true,
 
     cursorBorder: 3,
     x0: 3,
     y0: 3,
 
-    minCompMoveDelay: 300, //in miliseconds
-    maxCompMoveDelay: 1000, //in miliseconds
+    minCompMoveDelay: 200, //in miliseconds
+    maxCompMoveDelay: 600, //in miliseconds
 
     choosenCompPos: -1, // vetical position with cpmputer choose (max)
 };
 
 // ******************************************************************************************
 
-// field is amin array with objects
-// "box": box object
-// "value": box numeric value
-
-const field = fillArray(gameObj.maxFieldSize);
-
-// write values and hide
-taskDone = changeBoxesGroup(0, gameObj.fieldSize, gameObj.maxFieldSize);
-
-// box size
-// change height
-const boxSize = Math.floor(500 / gameObj.fieldSize);
-const cursorSize = boxSize - 2 * gameObj.cursorBorder;
-cursorBox.style.height = `${cursorSize}px`;
-cursorBox.style.width = `${cursorSize}px`;
-
-// make boxes
-taskDone = changeBoxesGroup(
-    2,
-    gameObj.fieldSize,
-    gameObj.maxFieldSize,
-    `${boxSize}px`
-);
-// hide the message box
-taskDone = actionOnMesage(0);
-
-taskDone = tableInitialization();
-
-// fill the cursorObject
-
-cursorObj["fieldBoxSize"] = boxSize;
-
-// START
-cursorObj["ownerNumber"] = 0;
-
-cursorObj.xNew = getRandomValue(0, gameObj.fieldSize);
-cursorObj.yNew = getRandomValue(0, gameObj.fieldSize);
-taskDone = createFieldLine(true);
-taskDone = nextCursorPosition(false);
-
-taskDone = driverButonActivity(true);
+taskDone = startGame();
 
 startButton.addEventListener("click", () => {
-    if (!isMessage) {
-        taskDone = actionOnMesage(1);
-    }
+    // selectAnimation();
 
-    const taskas = (i) => {
-        await(2000);
-        console.log(i);
-    };
+    gameObj.level++;
+    taskDone = startGame();
 
-    for (let i = 0; i < 10; i++) {
-        taskas(i);
-    }
+    // if (!isMessage) {
+    //     taskDone = actionOnMesage(1);
+    // }
+    // const taskas = (i) => {
+    //     await(2000);
+    //     console.log(i);
+    // };
+    // for (let i = 0; i < 10; i++) {
+    //     taskas(i);
+    // }
 });
