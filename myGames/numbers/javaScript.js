@@ -53,28 +53,43 @@ const startButton = document.getElementById("startBtn");
 
 // *****************************************************************
 // ASYNC FUNCTIONS
-async function compCursorMoveLoop(stopPosition) {
+// const compCursorMoveLoop = async (stopPosition) => {
+//     const tempValPositions = lineStatus.valuesPositions;
+//     let answer = "loop";
+
+//     for (let i = 0; i < tempValPositions.length; i++) {
+//         const loopIndex = lineStatus.valuePosIndex;
+
+//         if (stopPosition === lineStatus.valuesPositions[loopIndex]) {
+//             answer = "stop";
+//             break;
+//         }
+
+//         // requestAnimationFrame(nextCursorPosition(false));
+
+//         rndDelay(i);
+
+//     }
+// };
+
+const compCursorMoveLoop = (timestamp) => {
     const tempValPositions = lineStatus.valuesPositions;
     let answer = "loop";
-
-    const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
-
-    console.log(stopPosition);
-
-    for (let i = 0; i < tempValPositions.length; i++) {
+    if (iAnime < tempValPositions.length) {
         const loopIndex = lineStatus.valuePosIndex;
-
         if (stopPosition === lineStatus.valuesPositions[loopIndex]) {
             answer = "stop";
-            break;
+            return answer;
+        } else {
+            nextCursorPosition(false);
+            rndDelay(iAnime);
+            iAnime++;
+            if (answer != "stop") {
+                requestAnimationFrame(compCursorMoveLoop);
+            }
         }
-
-        nextCursorPosition(false);
-        // await sleep(1);
-
-        rndDelay(i);
     }
-}
+};
 
 async function selectAnimation() {
     // selectAnimation2(cursorObj.size);
@@ -127,8 +142,6 @@ const rndDelay = (speederIndex) => {
     const interval =
         getRandomValue(0, Math.round(25000 / (speederIndex + 1))) + 22000;
 
-    console.log(interval);
-
     for (let a = 0; a < interval; a++) {
         c = 1;
         for (let b = 1; b < a; b++) {
@@ -178,7 +191,6 @@ const changeBox = (getActionCode, boxName, par1) => {
     // 2- box size      (par1 = height)
 
     const currentBox = document.getElementById(boxName);
-    console.log(currentBox);
 
     if (getActionCode == 0) {
         if (!isNaN(par1)) {
@@ -209,7 +221,6 @@ const changeBoxesGroup = (getActionCode, fieldSize, maxFieldSize, par1) => {
     const loopFieldSize = getActionCode == 0 ? maxFieldSize : fieldSize;
 
     for (let i = 0; i < loopFieldSize; i++) {
-        console.log(field);
         line = field[i];
         for (let j = 0; j < loopFieldSize; j++) {
             if (getActionCode == 0) {
@@ -428,8 +439,6 @@ const readScoreLine = (sx, sy) => {
         tempScoreLine.push(tempfieldElementLine[i].value);
     }
 
-    console.log("tempScoreLine");
-    console.log(tempScoreLine);
     return tempScoreLine;
 };
 
@@ -658,7 +667,7 @@ const driverButonActivity = (isActive) => {
                 cursorObj.ownerNumber = 1 - cursorObj.ownerNumber;
 
                 tempGameStatus = createFieldLine(false);
-                if (!tempGameStatus) {
+                if (!!tempGameStatus) {
                     taskDone = EndLevel();
                 } else {
                     if (cursorObj.ownerNumber) {
@@ -706,7 +715,12 @@ const computerTurn = (direction) => {
     const myRnd = getRandomValue(0, 2);
     cursorObj.yDirection = myRnd == 0 ? -1 : 1;
 
-    // taskDone = compCursorMoveLoop(-1); //full loop
+    iAnime = 0;
+    stopPosition = -1;
+    requestAnimationFrame(compCursorMoveLoop());
+    // taskDone = compCursorMoveLoop(); //full loop
+    iAnime = 0;
+    stopPosition = choosenPosition;
     taskDone = compCursorMoveLoop(choosenPosition);
     // selectButton.click();
     return;
@@ -794,6 +808,8 @@ let taskDone;
 let stepDelay = 0; // delay when move computer
 let boxSize = 0;
 let tempGameStatus = 0; //-1 lost, 0- paly, 1- win
+let iAnime = 0;
+let stopPosition = 0;
 
 let isMessage = false;
 let field = [];
@@ -861,7 +877,7 @@ const gameObj = {
     maxNumber: 8,
     maxFieldSize: 10,
     fieldSize: 3,
-    level: 1,
+    level: 3,
     oponentComputer: true,
 
     cursorBorder: 3,
@@ -889,7 +905,7 @@ startButton.addEventListener("click", () => {
     // }
     // const taskas = (i) => {
     //     await(2000);
-    //     console.log(i);
+
     // };
     // for (let i = 0; i < 10; i++) {
     //     taskas(i);
