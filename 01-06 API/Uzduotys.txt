@@ -1,8 +1,0 @@
-1. Parsisiust duomenis iš kokteilio API (random cocktail)
-// www.thecocktaildb.com/api/json/v1/1/random.php
-(nepamirst https://);
-2. Atvaizduoti duomenis concolėj;
-3. Įdėti Title, description bei nuotrauką į kortelę;
-4. Kortelės apačioje pridėti burbuliuką, 20px X 20px, jei kokteilis alkoholinis burbuliukas turi būt raudonas, jei nealkoholinis - žalias;
-5. Paspaudus ant kortelės - consolėj turi būt atvaizduojamas kokteilio pavadinimas;
-6. CAO JS 21;

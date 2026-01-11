@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "file:///D:/Java-script-practice/01-05/index.html",
+            "url": "D:/Java-script-practice/FinalWorkJS/index.html",
             "webRoot": "${workspaceFolder}"
         }
     ]
