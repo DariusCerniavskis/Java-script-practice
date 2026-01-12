@@ -1,0 +1,4 @@
+1. Sukurti puslapį su formą, formą turi įdėt naują rezultatą į mockAPI;
+2. Kai rezultatas yra įdedamas, turi atsirast žinutė su užrašu, receptas buvo pridėtas; 
+3. Kai receptas yra įdedamas po 3sek vartotojas turi būt nukreipiamas į puslapį su visais receptais;
+4. Delete

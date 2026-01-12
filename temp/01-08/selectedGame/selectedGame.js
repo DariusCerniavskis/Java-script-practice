@@ -1,124 +1,58 @@
-const realEstateWrapper = document.getElementById("real-estate-wrapper");
+const topGamesWrapper = document.getElementById("top-games-wrapper");
 const tempDeleteBtn = document.getElementById("tempDelete");
 const restoreBtn = document.getElementById("restore");
 const totalyDeleteBtm = document.getElementById("totalyDelete");
 const exitButton = document.getElementById("exit");
 const confirmationWrapper = document.getElementById("confirmation-wrapper");
-const confirmText = document.getElementById("confirm-text");
+const confirmtext = document.getElementById("confirmtext");
 const yesButton = document.getElementById("yes-button");
 const noButton = document.getElementById("no-button");
 
 // const url = new URL(window.location.href);
 // const id = url.searchParams.get("id");
 
-// *************************************************************
-// export globals
-const typesOfRETempl = ["flat", "homestead", "garden-house"];
-const glDataArrayURL = "https://695e14ac2556fd22f6773e58.mockapi.io/";
-const glArrayURLprefix = "realEstates";
+const id = 3;
 
-// -------------------------------------------------------
-// export fetch
-export const getElement = async (fetchLink,elementId) => {
-    const response = await fetch(fetchLink + elementId);
+const buildScreen = async () => {
+    const response = await fetch(
+        `https://695e14ac2556fd22f6773e58.mockapi.io/topGames/${id}`
+    );
 
-    answer = await response.json();
+    game = await response.json();
 
-    return answer;
+    isTempDeleted = game.isDeleted;
+
+    const card = document.createElement("a");
+    card.classList.add("card");
+
+    const image = document.createElement("img");
+    image.classList.add("image");
+    image.src = game.image;
+
+    const title = document.createElement("h1");
+    title.classList.add("title");
+    title.innerText = game.name;
+
+    const realiseAndPlatforms = document.createElement("div");
+    realiseAndPlatforms.classList.add("real-plat-wrapper");
+
+    const realiseDate = document.createElement("h4");
+    realiseDate.classList.add("realise-date");
+    realiseDate.innerText = game.RealiseYear;
+
+    const platforms = document.createElement("h4");
+    platforms.classList.add("platforms");
+    platforms.innerText = game.platforms;
+
+    const disciption = document.createElement("p");
+    disciption.classList.add("discription");
+    disciption.innerText = game.description;
+
+    card.append(image, title, realiseAndPlatforms, disciption);
+    realiseAndPlatforms.append(realiseDate, platforms);
+
+    topGamesWrapper.append(card);
 };
-
-export const deleteElement = async (fetchLink, elementId) => {
-    const response = await fetch(fetchLink + elementId, {
-        method: "DELETE",
-    });
-
-    // laukiam kol įrašys
-    answer = await response.json();
-
-    return answer;
-};
-
-const changeElementParameter = async (fetchLink,elementId,parameter,value) => {
- const parameterAndValue=`${parameter}: ${value}`
- 
-    const requestOptions = {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ parameterAndValue })
-
-
-}; 
-     // laukiam kol įrašys
-    answer = await response.json();
-
-    console.log("isDelk keitimas")
-    console.log(answer)
-    return answer;
-};
-
-// -----------------------------------------------------
-// export function
-// 
-// 
-// 
-// 
-
-
-// **********************************************************
-    realEstates=[]
-
-    addObj = {
-        typeIndex: 2,
-        builtYear: 2012,
-        locationIndex: 2,
-        price: 25000,
-
-        imagesURL: ["https://aruodas-img.dgn.lt/object_66_129604139/nuotrauka.jpg"],
-    };
-
-    realEstates.push(addObj)
-    const estate=realEstates[0]
-
-// **********************************************************
-
-
-
-const id = 0;
-
-
-isTempDeleted = estate.isDeleted;
-
-const card = document.createElement("a");
-card.classList.add("card");
-
-const image = document.createElement("img");
-image.classList.add("image");
-image.src = estate.image;
-
-const title = document.createElement("h1");
-title.classList.add("title");
-title.innerText = estate.name;
-
-const realiseAndPlatforms = document.createElement("div");
-realiseAndPlatforms.classList.add("real-plat-wrapper");
-
-const realiseDate = document.createElement("h4");
-realiseDate.classList.add("realise-date");
-realiseDate.innerText = estate.RealiseYear;
-
-const platforms = document.createElement("h4");
-platforms.classList.add("platforms");
-platforms.innerText = estate.platforms;
-
-const disciption = document.createElement("p");
-disciption.classList.add("discription");
-disciption.innerText = estate.description;
-
-card.append(image, title, realiseAndPlatforms, disciption);
-realiseAndPlatforms.append(realiseDate, platforms);
-
-realEstateWrapper.append(card);
-
 
 const buttonsShow = (init) => {
     tempDeleteBtn.style.display = isTempDeleted || init ? "none" : "flex";
@@ -128,23 +62,23 @@ const buttonsShow = (init) => {
 
 const saveDeleteStatus = async () => {
     isTempDeleted = !isTempDeleted;
-    estate.isDeleted = isTempDeleted;
+    game.isDeleted = isTempDeleted;
 
     const response = await fetch(
         `https://695e14ac2556fd22f6773e58.mockapi.io/topGames/${id}`,
         {
             method: "PUT",
-            body: JSON.stringify(estate),
+            body: JSON.stringify(game),
             headers: { "Content-Type": "application/json" },
         }
     );
 
-    REAfterAction = await response.json();
+    gameAfterAction = await response.json();
 };
 
 const totalyDeleting = async () => {
     isTempDeleted = !isTempDeleted;
-    estate.isDeleted = isTempDeleted;
+    game.isDeleted = isTempDeleted;
 
     const response = await fetch(
         `https://695e14ac2556fd22f6773e58.mockapi.io/topGames/${id}`,
@@ -153,12 +87,12 @@ const totalyDeleting = async () => {
         }
     );
 
-    estateAfterAction = await response.json();
+    gameAfterAction = await response.json();
 };
 
 const exit = () => {
     setTimeout(() => {
-        if (estateAfterAction) {
+        if (gameAfterAction) {
             window.location.replace("../index.html");
         }
     }, 1000);
@@ -168,7 +102,7 @@ const confimation = (isDeleting) => {
     confirmationWrapper.style.display = "flex";
     isConfimation = true;
     isYes = false;
-    confirmText.style.color = isDeleting ? "red" : "black";
+    confirmtext.style.color = isDeleting ? "red" : "black";
 };
 
 yesButton.addEventListener("click", () => {
@@ -240,11 +174,11 @@ let isTempDeleted = false;
 let isTotalyDeleted = false;
 let isConfimation = false;
 let isYes = false;
-estate = {};
+let game = {};
 
-const estateAfterAction = {};
+const gameAfterAction = {};
 
-console.log(estate);
+console.log(game);
 
 const action = {
     tempDelete: false,
