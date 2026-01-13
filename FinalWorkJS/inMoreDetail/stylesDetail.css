@@ -1,7 +1,27 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .page-wrapper {
-    width: 700px;
+    max-width: 700px;
     height: auto;
-    padding: 2rem 3rem;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    padding: 3rem;
+
+    border: 2px solid grey;
+
+    background-color: bisque;
 }
 
 .header-wrapper {
@@ -12,7 +32,12 @@
     justify-content: space-between;
     align-items: center;
 
+    position: relative;
+    margin-bottom: 1rem;
+
     padding: 1rem 2rem;
+
+    border: 1px solid black;
     background-color: rgb(117, 218, 193);
 }
 
@@ -67,57 +92,75 @@
     background-color: bisque;
 }
 
-.card {
+.estate-card-wrapper {
     width: 100%;
-    padding: 2rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    gap: 2rem;
+
+    padding: 1rem;
 
     border: 2px solid black;
-    border-radius: 10px;
-
-    cursor: pointer;
 
     background-color: rgb(203, 224, 179);
 }
 
-.image {
+.img-wrapper {
+    width: 100%;
+}
+#card-img {
     width: 100%;
     object-fit: contain;
 }
 
-.title {
-    text-decoration: underline;
-}
+.data-wrapper {
+    width: 100%;
 
-.real-plat-wrapper {
     display: flex;
     justify-content: space-between;
 
-    padding: 2rem 0;
+    gap: 1rem;
+
+    flex-wrap: wrap;
+
+    padding: 1rem;
+
+    border: 1px solid blue;
+    background-color: yellow;
 }
 
-.realise-date {
-    color: rgb(32, 35, 204);
+.data-pair-wrappere {
+    width: 47%;
+
+    display: flex;
+    align-items: center;
+
+    border: px solid green;
 }
 
-.platforms {
-    color: green;
+.type-name,
+.location-name {
+    width: 90px;
 }
 
-.discription {
-    padding: 2rem 0;
-
-    text-align: justify;
+.year-name,
+.price-name {
+    width: 100px;
 }
 
 #confirmation-wrapper {
-    width: 200px;
-    height: 90px;
+    width: 180x;
+    height: 100%;
 
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    left: 100px;
+    left: 0;
 
     padding: 0.5rem;
     position: absolute;
@@ -136,4 +179,15 @@
     height: 2rem;
     padding: 0.2rem 0.3rem;
     background-color: grey;
+}
+
+#infoBox {
+    width: 100%;
+    height: 4rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 2px dashed red;
 }

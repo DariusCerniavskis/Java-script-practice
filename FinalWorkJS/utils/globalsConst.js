@@ -1,5 +1,7 @@
 export const typesOfRETempl = ["flat", "homestead", "garden-house"];
 
+export const locationsTempl = ["Vilnius", "Kaunas", "Klaipėda"];
+
 export const typesOfHeatingTempl = [
     "central",
     "solid fuel",
@@ -52,7 +54,6 @@ export const filterTempl = {
 
     statusIndex: 0,
 };
-
 
 const glDataArrayURL = "https://695e14ac2556fd22f6773e58.mockapi.io/";
 const glArrayURLprefix = "realEstates";

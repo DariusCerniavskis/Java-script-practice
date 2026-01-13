@@ -2,6 +2,11 @@
 // import { addNewElement } from "../utils/fetches.js";
 // import { getObjectValues, fillHole } from "../utils/functions.js";
 
+const confirmationWrapper = document.getElementById("confirmation-wrapper");
+const confirmText = document.getElementById("confirm-text");
+const yesButton = document.getElementById("yes-button");
+const noButton = document.getElementById("no-button");
+
 const cancelBtn = document.getElementById("cancelBtn");
 const typeComboBtn = document.getElementById("type-combo-btn");
 const yearComboBtn = document.getElementById("built-year");
@@ -9,6 +14,7 @@ const locationComboBtn = document.getElementById("location-combo-btn");
 const inputPrice = document.getElementById("input-price");
 const imgURLWrapper = document.getElementById("img-URL-wrapper");
 const registerBtn = document.getElementById("register-btn");
+const infoBox = document.getElementById("infoBox");
 
 // *****************************************************************
 // export
@@ -20,16 +26,27 @@ const glArrayURLprefix = "realEstates";
 // FETCHES
 // -------------------------------------------------------
 const addNewElement = async (fetchLink, elementObj) => {
-    const response = await fetch(fetchLink, {
-        method: "POST",
-        body: JSON.stringify(elementObj),
-        headers: { "Content-Type": "application/json" },
-    });
+    try {
+        const response = await fetch(fetchLink, {
+            method: "POST",
+            body: JSON.stringify(elementObj),
+            headers: { "Content-Type": "application/json" },
+        });
 
-    // laukiam kol įrašys
-    answer = await response.json();
+        // laukiam kol įrašys
+        answer = await response.json();
 
-    return answer;
+        infoBox.innerText = `Real estate was added to list sucsesfully.`;
+        infoBox.style.borderColor = "green";
+        return answer;
+    } catch (err) {
+        infoBox.innerText = `Real estate adding failed: ${err}`;
+        infoBox.style.borderColor = "red";
+
+        console.error("Update failed:", err);
+    }
+
+    infoBox.style.display = "flex";
 };
 
 // FUNCTIONS
@@ -142,21 +159,65 @@ registerBtn.addEventListener("click", async () => {
         builtYear: yearComboBtn.value,
         locationIndex: locationComboBtn.selectedIndex,
         price: inputPrice.value,
-
         imagesURL: getObjectValues(inputURLs),
+
+        // default
+        houseFloorsCount: 5,
+        flatFloor: 2,
+        roomsNumber: 2,
+        sqare: 40,
+        heatingTypeIndex: 0,
+        renovationYear: 2020,
+        isRenLoanPaidOff: false,
+        sellerEmail: "example@gmail.com",
+        countryPhoneCode: "+370",
+        sellerPhone: "",
+        statusIndex: 0,
+        isDeleted: false,
+        deleteDate: "",
     };
 
     console.log(addObj);
 
     answer = addNewElement(glDataArrayURL + glArrayURLprefix, addObj);
 
-    // const gameRes = await insertNewGame(game);
+    exit();
+});
 
-    // setTimeout(() => {
-    //     if (gameRes) {
-    //         window.location.replace("../index.html");
-    //     }
-    // }, 2000);
+const exit = () => {
+    setTimeout(() => {
+        window.location.replace("../index.html");
+    }, 1000);
+};
+
+const confimation = () => {
+    confirmationWrapper.style.display = "flex";
+    isConfimation = true;
+    isYes = false;
+    confirmText.style.color = "black";
+};
+
+yesButton.addEventListener("click", () => {
+    isYes = true;
+    confirmationWrapper.style.display = "none";
+    isConfimation = false;
+    // cancel
+
+    exit();
+});
+
+noButton.addEventListener("click", () => {
+    isYes = false;
+    confirmationWrapper.style.display = "none";
+    isConfimation = false;
+});
+
+cancelBtn.addEventListener("click", () => {
+    // exit without deleting
+    infoBox.style.display = "none";
+    if (!isConfimation) {
+        confimation(true);
+    }
 });
 
 // newElement.addEventListener("focusout", () => {
@@ -175,7 +236,10 @@ registerBtn.addEventListener("click", async () => {
 const inputURLs = [];
 let addObj = addingTempl;
 let answer = "";
+let isConfimation = false;
+let isYes = false;
 
+confirmationWrapper.style.display = "none";
 addYearList(2026, 1980);
 const newURL = addNewURL();
 

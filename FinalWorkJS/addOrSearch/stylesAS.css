@@ -20,8 +20,8 @@ option {
 }
 
 .page-wrapper {
-    min-width: 768px;
-    width: 10vw;
+    max-width: 1000px;
+    min-width: 500px;
     height: auto;
 
     margin-left: auto;
@@ -34,7 +34,7 @@ option {
 
     padding: 2rem;
 
-    border: 2px solid black;
+    /* border: 2px solid black; */
 
     background-color: antiquewhite;
 }
@@ -48,6 +48,7 @@ option {
     align-items: center;
     gap: 2rem;
 
+    position: relative;
     padding: 1rem;
 
     background-color: aqua;
@@ -133,4 +134,45 @@ option {
 
 .year-Btn {
     width: 100%;
+}
+
+#confirmation-wrapper {
+    width: 180x;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    left: 0;
+    top: 0;
+
+    padding: 0.5rem;
+    position: absolute;
+    background-color: rgb(231, 233, 122);
+    border: 1px solid black;
+}
+
+.confirm-btn-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#yes-button,
+#no-button {
+    height: 2rem;
+    padding: 0.2rem 0.3rem;
+    background-color: grey;
+}
+
+#infoBox {
+    width: 100%;
+    height: 4rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 2px dashed red;
 }

@@ -7,10 +7,17 @@
 button {
     width: 80px;
     padding: 0.5rem 1rem;
+    text-decoration: none;
+}
+
+a {
+    text-decoration: none;
 }
 
 .page-wrapper {
-    width: 100vw;
+    max-width: 1000px;
+    min-width: 500px;
+
     height: auto;
 
     margin-left: auto;
@@ -36,8 +43,6 @@ button {
     gap: 2rem;
 
     padding: 1rem;
-
-    background-color: aqua;
 }
 
 .section-wrapper {
@@ -48,10 +53,9 @@ button {
     gap: 2rem;
 
     margin-top: 2rem;
+    padding: 1rem;
 
-
-
-    border: 1px solid black;
+    border: 1px solid rgb(17, 196, 106);
 }
 
 .section-wrapper h2 {
@@ -60,9 +64,7 @@ button {
     align-items: center;
 
     padding: 1rem;
-
 }
-
 
 .estateImage {
     width: 100%;
@@ -86,9 +88,5 @@ button {
     justify-content: start;
     align-items: center;
 
-
-
     all: unset;
-
-
 }
