@@ -50,8 +50,6 @@ option {
 
     position: relative;
     padding: 1rem;
-
-    background-color: aqua;
 }
 
 .AS-wrapper {
@@ -63,8 +61,6 @@ option {
     flex-wrap: wrap;
 
     border: 2px solid;
-
-    background-color: yellow;
 }
 
 .nav-wrapper {
@@ -92,8 +88,6 @@ option {
 
     align-items: center;
     gap: 0.2rem;
-
-    background-color: aliceblue;
 }
 
 .constr-year-wrapper {
@@ -102,8 +96,6 @@ option {
 
     align-items: center;
     gap: 0.2rem;
-
-    background-color: aliceblue;
 }
 
 .img-URL-wrapper {
@@ -124,8 +116,6 @@ option {
     align-items: center;
 
     padding: 1rem;
-
-    background-color: aliceblue;
 }
 
 .input-Btn {
