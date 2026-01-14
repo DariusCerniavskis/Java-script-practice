@@ -174,7 +174,5 @@ option {
     justify-content: center;
     align-items: center;
 
-    margin: 0.5rem;
-
     border: 2px dashed red;
 }

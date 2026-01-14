@@ -1,98 +1,88 @@
+import {
+    typesOfRETempl,
+    locationsTempl,
+    glDataArrayURL,
+} from "./utils/globalsConst.js";
+
+import { getArrayFetch } from "./utils/fetches.js";
+
+const tempDeletedWrapper = document.getElementById("temp-deleted");
+tempDeletedWrapper.style.display = "none";
+const deletedCheck = document.getElementById("check-deleted");
 const addBtn = document.getElementById("add-button");
 const searchBtn = document.getElementById("search-button");
-const estatesWrapper = document.getElementById("card");
+let estatesWrapper = document.getElementById("card");
+searchBtn.style.display = "none";
 
 // window.location.replace("./addOrSearch/index.html");
 
 // window.location.replace("./inMoreDetail/index.html");
 
-// *************************************************************
-// export globals
-const typesOfRETempl = ["flat", "homestead", "garden-house"];
-const locationsTempl = ["Vilnius", "Kaunas", "Klaipėda"];
-const glDataArrayURL =
-    "https://695e14ac2556fd22f6773e58.mockapi.io/realEstates";
-
-// -------------------------------------------------------
-// export fetch
-const getArrayFetch = async (fetchLink) => {
-    const response = await fetch(fetchLink);
-    answer = await response.json();
-    return answer;
-};
-
-// realEstates = init(glDataArrayURL);
-// console.log("Rezultatas");
-// console.log(realEstates);
-
-// const getArray = async (fetchLink) => {
-
-//     const response = await fetch(fetchLink);
-
-//     answer = await response.json();
-
-//     return answer;
-// };
-
-// -----------------------------------------------------
-// export function
-//
-//
-//
-//
-// **********************************************************
-// realEstates = [];
-
-// addObj = {
-//     typeIndex: 2,
-//     builtYear: 2012,
-//     locationIndex: 2,
-//     price: 25000,
-
-//     imagesURL: ["https://aruodas-img.dgn.lt/object_66_129604139/nuotrauka.jpg"],
-// };
-
-// realEstates.push(addObj);
-
-// **********************************************************
-
-const buildRealAstates = async (dataURL) => {
-    const realEstates = await getArrayFetch(dataURL);
-
+const buildEstateList = (isDeleted) => {
     realEstates.forEach((re) => {
-        const card = document.createElement("a");
-        // card.classList.add("section-wrapper");
-        const link = `./inMoreDetail/index.html?id=${re.id}`;
-        card.href = link;
+        if (isDeleted === re.isDeleted) {
+            const card = document.createElement("a");
+            // card.classList.add("section-wrapper");
+            const link = `./inMoreDetail/index.html?id=${re.id}`;
+            card.href = link;
 
-        const title = document.createElement("h2");
-        title.innerText = typesOfRETempl[re.typeIndex];
+            const title = document.createElement("h2");
+            title.innerText = typesOfRETempl[re.typeIndex - 1];
 
-        const image = document.createElement("img");
-        image.classList.add("class", "estateImage");
-        image.src = re.imagesURL[0];
+            const image = document.createElement("img");
+            image.classList.add("class", "estateImage");
+            image.src = re.imagesURL[0];
 
-        const mainInfoWrapper = document.createElement("div");
-        mainInfoWrapper.classList.add("class", "main-info-wraprer");
+            const mainInfoWrapper = document.createElement("div");
+            mainInfoWrapper.classList.add("class", "main-info-wraprer");
 
-        const priceWrapper = document.createElement("div");
-        priceWrapper.classList.add("class", "price-wraprer");
-        const price = document.createElement("h3");
-        price.innerText = `Price: ${re.price} €`;
+            const priceWrapper = document.createElement("div");
+            priceWrapper.classList.add("class", "price-wraprer");
+            const price = document.createElement("h3");
+            price.innerText = `Price: ${re.price} €`;
 
-        const yearWrapper = document.createElement("div");
-        yearWrapper.classList.add("class", "year-wraprer");
-        const year = document.createElement("h3");
-        year.innerText = `Location: ${locationsTempl[re.locationIndex]}`;
+            const locationWrapper = document.createElement("div");
+            locationWrapper.classList.add("class", "location-wraprer");
+            const location = document.createElement("h3");
+            location.innerText = `Location: ${
+                locationsTempl[re.locationIndex - 1]
+            }`;
 
-        priceWrapper.append(price);
-        yearWrapper.append(year);
-        mainInfoWrapper.append(priceWrapper, yearWrapper);
+            priceWrapper.append(price);
+            locationWrapper.append(location);
+            mainInfoWrapper.append(priceWrapper, locationWrapper);
 
-        card.append(title, image, mainInfoWrapper);
+            card.append(title, image, mainInfoWrapper);
 
-        estatesWrapper.append(card);
+            estateObjects.push(card);
+
+            estatesWrapper.append(card);
+        }
     });
 };
 
-buildRealAstates(glDataArrayURL);
+const buildRealEstates = async (dataURL) => {
+    realEstates = await getArrayFetch(dataURL);
+
+    const isSomeDeleted = realEstates.some((re) => {
+        return re.isDeleted;
+    });
+
+    tempDeletedWrapper.style.display = isSomeDeleted ? "flex" : "none";
+
+    buildEstateList(false);
+    deletedCheck.checked = false;
+};
+
+deletedCheck.addEventListener("click", () => {
+    while (estatesWrapper.firstChild) {
+        estatesWrapper.removeChild(estatesWrapper.firstChild);
+    }
+
+    buildEstateList(deletedCheck.checked);
+});
+
+let realEstates = [];
+let estateObjects = [];
+
+buildRealEstates(glDataArrayURL);

@@ -1,0 +1,40 @@
+.new-input-wrapper {
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+}
+
+.new-input-wrapper h2 {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.new-input-wrapper input {
+    width: 100%;
+    padding: 0.3rem 0.6rem;
+}
+
+.new-input-wrapper textarea {
+    width: 100%;
+    padding: 0.3rem 0.6rem;
+
+    height: 6rem;
+}
+
+.new-input-wrapper button {
+    width: 40%;
+    padding: 0.3rem 0.6rem;
+}
+
+#info-box {
+    width: 100%;
+    height: 6rem;
+
+    margin-top: 2rem;
+
+    border: 1px dashed green;
+}

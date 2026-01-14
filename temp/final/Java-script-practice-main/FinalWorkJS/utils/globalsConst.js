@@ -1,6 +1,3 @@
-export const glDataArrayURL =
-    "https://695e14ac2556fd22f6773e58.mockapi.io/realEstates";
-
 export const typesOfRETempl = ["flat", "homestead", "garden-house"];
 
 export const locationsTempl = ["Vilnius", "Kaunas", "Klaipėda"];
@@ -23,13 +20,13 @@ export const addingTempl = {
     houseFloorsCount: 5,
     flatFloor: 2,
     roomsNumber: 2,
-    square: 40,
+    sqare: 40,
     price: 70000,
     heatingTypeIndex: 0,
     builtYear: 1985,
     renovationYear: 2020,
     isRenLoanPaidOff: false,
-    imagesURL: "",
+    imagesURL: [],
     sellerEmail: "example@gmail.com",
     countryPhoneCode: "+370",
     sellerPhone: "",
@@ -57,3 +54,6 @@ export const filterTempl = {
 
     statusIndex: 0,
 };
+
+const glDataArrayURL = "https://695e14ac2556fd22f6773e58.mockapi.io/";
+const glArrayURLprefix = "realEstates";

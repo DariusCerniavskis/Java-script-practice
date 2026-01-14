@@ -1,14 +1,29 @@
 let answer = {};
 
-export const getArrayFetch = async (fetchLink) => {
+export const getArray = async (fetchLink) => {
     const response = await fetch(fetchLink);
+
     answer = await response.json();
+
     return answer;
 };
 
 export const getElement = async (fetchLink, elementId) => {
     const response = await fetch(fetchLink + "/" + elementId);
 
+    answer = await response.json();
+
+    return answer;
+};
+
+export const addNewElement = async (fetchLink, elementsObj) => {
+    const response = await fetch(await fetch(fetchLink), {
+        method: "POST",
+        body: JSON.stringify(elementsObj),
+        headers: { "Content-Type": "application/json" },
+    });
+
+    // laukiam kol įrašys
     answer = await response.json();
 
     return answer;

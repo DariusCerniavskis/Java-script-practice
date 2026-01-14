@@ -38,24 +38,11 @@ a {
     height: 4rem;
 
     display: grid;
-    grid-template-columns: 8fr 1fr;
+    grid-template-columns: 8fr 1fr 1fr;
     align-items: center;
     gap: 2rem;
 
     padding: 1rem;
-}
-
-.header-nav-wrapper {
-    display: flex;
-    justify-content: end;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-#temp-deleted {
-    width: 70px;
-    display: flex;
-    justify-content: space-between;
 }
 
 .section-wrapper {
@@ -96,7 +83,7 @@ a {
 }
 
 .price-wraprer,
-.location-wraprer {
+.year-wraprer {
     display: flex;
     justify-content: start;
     align-items: center;

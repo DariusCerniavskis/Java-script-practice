@@ -15,14 +15,11 @@ const builtYear = document.getElementById("builtYear");
 const cardImage = document.getElementById("cardImg");
 const locationInDetail = document.getElementById("location");
 const price = document.getElementById("price");
-const email = document.getElementById("email");
-const phone = document.getElementById("phone");
-
 const infoBox = document.getElementById("infoBox");
 
-const url = new URL(window.location.href);
-const id = url.searchParams.get("id");
-// const id = 5;
+// const url = new URL(window.location.href);
+// const id = url.searchParams.get("id");
+const id = 5;
 
 // *************************************************************
 // export globals
@@ -42,17 +39,14 @@ const getElementFetch = async (fetchLink, elementId) => {
 };
 
 const totalyDeleteFetch = async (fetchLink, elementId) => {
-    const fullLink = `${fetchLink}/${elementId}`;
-
-    const response = await fetch(fullLink, {
+    const response = await fetch(fetchLink + "/" + elementId, {
         method: "DELETE",
     });
 
-    if (!response.ok) {
-        throw new Error(`HTTP error: ${response.status}`);
-    }
+    // laukiam kol įrašys
+    answer = await response.json();
 
-    return await response.json();
+    return answer;
 };
 
 const updateElementFetch = async (fetchLink, elementId, updatingArray) => {
@@ -97,15 +91,12 @@ const updateElementFetch = async (fetchLink, elementId, updatingArray) => {
 
 const fillCard = () => {
     infoBox.style.display = "none";
-
+    console.log(estate);
     imageSrc.src = estate.imagesURL[0];
-    type.innerText = typesOfRETempl[estate.typeIndex - 1];
+    type.innerText = typesOfRETempl[estate.typeIndex];
     builtYear.innerText = estate.builtYear;
-    locationInDetail.innerText = locationsTempl[estate.locationIndex - 1];
+    locationInDetail.innerText = locationsTempl[estate.locationIndex];
     price.innerText = estate.price + " ";
-    email.innerText = estate.sellerEmail;
-    phone.innerText = estate.sellerPhone;
-
     infoBox.innerText = "";
 };
 
@@ -158,16 +149,7 @@ const saveDeleteStatus = async (fetchURL, fetchId) => {
 };
 
 const totalyDeleting = async (fetchURL, fetchId) => {
-    try {
-        const estateAfterAction = await totalyDeleteFetch(fetchURL, fetchId);
-    } catch (err) {
-        infoBox.innerText = `Real estate totaly daleting failed: ${err}`;
-        infoBox.style.borderColor = "red";
-
-        console.error("Delete failed:", err);
-    }
-
-    infoBox.style.display = "flex";
+    estateAfterAction = await totalyDeleteFetch(fetchURL, fetchId);
 };
 
 const exit = () => {
@@ -222,10 +204,11 @@ totalyDeleteBtm.addEventListener("click", () => {
     // DELETE
     //id=false
     infoBox.style.display = "none";
-
-    if (!isConfimation) {
-        action.totalyDelete = true;
-        confimation(true);
+    if (isTempDeleted) {
+        if (!isConfimation) {
+            action.totalyDelete = true;
+            confimation(true);
+        }
     }
 });
 

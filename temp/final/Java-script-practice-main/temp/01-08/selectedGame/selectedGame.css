@@ -1,27 +1,7 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .page-wrapper {
-    max-width: 700px;
+    width: 700px;
     height: auto;
-
-    margin-left: auto;
-    margin-right: auto;
-
-    padding: 3rem;
-
-    border: 2px solid grey;
-
-    background-color: bisque;
+    padding: 2rem 3rem;
 }
 
 .header-wrapper {
@@ -32,12 +12,8 @@ button {
     justify-content: space-between;
     align-items: center;
 
-    position: relative;
-    margin-bottom: 1rem;
-
     padding: 1rem 2rem;
-
-    border: 1px solid black;
+    background-color: rgb(117, 218, 193);
 }
 
 .del-nav-wrapper {
@@ -78,7 +54,7 @@ button {
     background-color: black;
 }
 
-#real-estate-wrapper {
+#top-games-wrapper {
     width: 100%;
 
     padding: 2rem 3rem;
@@ -91,83 +67,57 @@ button {
     background-color: bisque;
 }
 
-.estate-card-wrapper {
+.card {
     width: 100%;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    gap: 2rem;
-
-    padding: 1rem;
+    padding: 2rem;
 
     border: 2px solid black;
+    border-radius: 10px;
+
+    cursor: pointer;
 
     background-color: rgb(203, 224, 179);
 }
 
-.img-wrapper {
-    width: 100%;
-}
-#card-img {
+.image {
     width: 100%;
     object-fit: contain;
 }
 
-.data-wrapper {
-    width: 100%;
+.title {
+    text-decoration: underline;
+}
 
+.real-plat-wrapper {
     display: flex;
     justify-content: space-between;
 
-    gap: 1rem;
-
-    flex-wrap: wrap;
-
-    padding: 1rem;
-
-    border: 1px solid blue;
+    padding: 2rem 0;
 }
 
-.data-pair-wrapper1,
-.data-pair-wrapper2 {
-    display: flex;
-    align-items: center;
-
-    border: px solid green;
+.realise-date {
+    color: rgb(32, 35, 204);
 }
 
-.data-pair-wrapper1 {
-    width: 56%;
+.platforms {
+    color: green;
 }
 
-.data-pair-wrapper2 {
-    width: 40%;
-}
+.discription {
+    padding: 2rem 0;
 
-.type-name,
-.location-name,
-.email-name {
-    width: 90px;
-}
-
-.year-name,
-.price-name,
-.phone-name {
-    width: 100px;
+    text-align: justify;
 }
 
 #confirmation-wrapper {
-    width: 180x;
-    height: 100%;
+    width: 200px;
+    height: 90px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    left: 0;
+    left: 100px;
 
     padding: 0.5rem;
     position: absolute;
@@ -186,15 +136,4 @@ button {
     height: 2rem;
     padding: 0.2rem 0.3rem;
     background-color: grey;
-}
-
-#infoBox {
-    width: 100%;
-    height: 4rem;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    border: 2px dashed red;
 }
