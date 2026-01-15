@@ -105,9 +105,7 @@ const sortedObject = (items) => {
         if (!acc[curr]) {
             // current categories objects array
             const categoryItems = [...items].filter((item) => {
-                if (item.category == curr) {
-                    return item.name;
-                }
+                return item.category == curr;
             });
 
             // current categories names
@@ -123,27 +121,18 @@ const sortedObject = (items) => {
     return newObject;
 };
 
+// ---------------------------------------------------------------------
+// const sortedObject = (items) => {
+//     return items.reduce((acc, item) => {
+//         if (!acc[item.category]) {
+//             acc[item.category] = [];
+//         }
+//         acc[item.category].push(item.name);
+//         return acc;
+//     }, {});
+// };
+// ---------------------------------------------------------------------------
+
 console.log("answer");
 
 console.log(sortedObject(items));
-
-// const isUniqueItem = items
-//     .map(item => item.category)
-//     .includes(category);
-
-// console.log(isUniqueItem);
-
-// const uniqueCategory = items.reduce((acc, curr) => {
-//     const uniqueItem=acc.includes((a,curr)=>{
-//         return acc.category=curr.category
-//     })
-//     return acc.category.includes(curr.category) ? acc : [...acc, curr];
-// }, []);
-
-// console.log(uniqueCategory);
-
-// const fruit = items.filter((item) => {
-//     return item.category === "fruit";
-// });
-
-// console.log(fruit);
