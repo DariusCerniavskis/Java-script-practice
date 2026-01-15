@@ -1,0 +1,54 @@
+Pusę dienos prasikankinau, kol supratau, kodėl 1 variantas neveikia.
+Kodėl negalima į fetch pricedurą kreiptis iš paptrastos ir tikėtis, kad ji grąžins rezultatą.
+Atrodytų, kad "return await response.json();" turėtų režultatą grąžinti jo sulaukęs iš fetch užklausos. Pasirodo, nieks nelaukia ir iš karto grįžta tuščiai. 
+
+
+
+
+
+//********************************************************************
+//NEVEIKIANTIS VARIANTAS
+
+const getArrayFetch = async (fetchLink) => {
+    const response = await fetch(fetchLink);
+
+    return await response.json();
+};
+
+
+const realAstates=getArrayFetch(dataURL);
+
+
+realEstates.forEach((re) => {
+        const card = document.createElement("a");
+        card.classList.add("section-wrapper");
+});
+
+
+//**********************************************************************
+
+
+
+
+
+//********************************************************************
+//VEIKIANTIS VARIANTAS
+
+const getArrayFetch = async (fetchLink) => {
+    const response = await fetch(fetchLink);
+    answer = await response.json();
+    return answer;
+};
+
+
+const buildRealAstates = async (dataURL) => {
+    const realEstates = await getArrayFetch(dataURL);
+
+    realEstates.forEach((re) => {
+        const card = document.createElement("a");
+        card.classList.add("section-wrapper");
+    });
+};
+
+
+//**********************************************************************
