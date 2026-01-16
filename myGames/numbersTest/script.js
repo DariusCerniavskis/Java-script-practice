@@ -1,60 +1,31 @@
-// const adiv = document.getElementById("mydiv");
-// const adiv2 = document.getElementById("mydiv2");
-// let timestamp = 0;
-
-// const moveDiv = () => {
-//     leftPos += 1;
-//     adiv.style.left = leftPos + "px";
-//     console.log("1 " + timestamp);
-//     if (leftPos > 100) {
-//         return;
-//     }
-
-//     requestAnimationFrame(moveDiv);
-// };
-
-// const moveDiv2 = (timestamp) => {
-//     leftPos += 1;
-//     adiv2.style.left = leftPos + "px";
-//     console.log("2 " + timestamp);
-//     if (leftPos > 100) {
-//         return;
-//     }
-
-//     requestAnimationFrame(moveDiv2);
-// };
-
-// let leftPos = 5;
-// for (let i = 0; i < 5; i++) {
-//     console.log(i);
-//     requestAnimationFrame(moveDiv);
-//     console.log(timestamp);
-//     requestAnimationFrame(moveDiv2);
-// }
-
-// console.log(adiv2.left);
-
-// const a = requestAnimationFrame(moveDiv);
-// const a = moveDiv();
-
-//
-//
 // ***************************************************
 const adiv1 = document.getElementById("mydiv");
-const adiv2 = document.getElementById("mydiv2");
-const test = document.getElementById("test");
-// let pos = 0;
-let pos1 = 0;
-let pos2 = 0;
-let isGo = false;
+const left = document.getElementById("left");
+const up = document.getElementById("up");
+const down = document.getElementById("down");
+const right = document.getElementById("right");
+
+let xPosition = 0;
+let yPosition = 0;
+let tempPosition = 0;
+let speed = 3;
+const distance = 100;
 
 // 1. Helper to animate an element to a target
-const animateTo = (element, target, pos) => {
+const animateTo = (object, position, speed, distance, isVerticaly) => {
+    let way = 0;
+
     return new Promise((resolve) => {
         const step = () => {
-            pos += 2; // Speed
-            element.style.transform = `translateX(${pos}px)`;
-            if (pos < target) {
+            way = way + Math.abs(speed);
+            position = position + speed; // speeed can be + or -
+            if (isVerticaly) {
+                object.style.top = `${position}px`;
+            } else {
+                object.style.left = `${position}px`;
+            }
+
+            if (way < distance) {
                 requestAnimationFrame(step);
             } else {
                 resolve(); // Animation finished
@@ -64,53 +35,37 @@ const animateTo = (element, target, pos) => {
     });
 };
 
-// 2. Helper for the 5-second pause
-const pause = (ms) => new Promise((res) => setTimeout(res, ms));
 
-// 3. Main Sequence
-// const runSequence = async () => {
-//     for (let i = 0; i < 10; i++) {
-//         // Repeat 3 times
-//         console.log(`Starting Round ${i + 1}`);
 
-//         // Move first div
-//         await animateTo(adiv1, (i + 1) * 200, pos1);
-//         pos1 += 200;
-
-//         // 5-second pause
-
-//         if (isGo) {
-//             // Move second div
-//             await animateTo(adiv1, pos1 + 200, pos1);
-//             pos1 += 200;
-//         } else {
-//             await pause(5000);
-//         }
-
-//         // Reset positions if you want to repeat from start
-//         // adiv1.style.transform = "translateX(0px)";
-//         // adiv2.style.transform = "translateX(0px)";
-//     }
-// };
-
-// runSequence();
-
-test.addEventListener("click", () => {
-    // let pause = (ms) => new Promise((res) => setTimeout(res, ms));
+const moovingAction = (object, speed, distance, isVerticaly) => {
+    const direct = Math.sign(speed);
+    if (isVerticaly) {
+        tempPosition = yPosition;
+        yPosition = yPosition + distance * direct;
+    } else {
+        tempPosition = xPosition;
+        xPosition = xPosition + distance * direct;
+    }
 
     const move = async () => {
-        await animateTo(adiv1, (i + 1) * 200, pos1);
-        pos1 += 200;
+        await animateTo(object, tempPosition, speed, distance, isVerticaly);
     };
-
     move();
+};
 
-    isGo = !isGo;
+left.addEventListener("click", () => {
+    judam(adiv1, -Math.abs(speed), distance, false);
 });
 
-// while (true){
-//     if(!isgo){
-//    await pause(1)
-//     }
+up.addEventListener("click", () => {
+    judam(adiv1, -Math.abs(speed), distance, true);
+});
 
-// }
+down.addEventListener("click", () => {
+    judam(adiv1, Math.abs(speed), distance, true);
+});
+
+right.addEventListener("click", () => {
+    judam(adiv1, Math.abs(speed), distance, false);
+});
+

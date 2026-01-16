@@ -1,5 +1,7 @@
 // HTML elements
 const cursorBox = document.getElementById("cursorBox");
+const cursorBox2 = document.getElementById("cursorBox2");
+cursorBox2.style.display = "none";
 const leftButton = document.getElementById("leftBtn");
 const rightButton = document.getElementById("rightBtn");
 const selectButton = document.getElementById("selectBtn");
@@ -81,7 +83,7 @@ const compCursorMoveLoop = (timestamp) => {
             answer = "stop";
             return answer;
         } else {
-            nextCursorPosition(false);
+            nextCursorPosition(false, false);
             rndDelay(iAnime);
             iAnime++;
             if (answer != "stop") {
@@ -254,7 +256,7 @@ const checkIsBorderOut = (curPos, newPos, dir) => {
     }
 };
 
-const nextCursorPosition = (isNearest) => {
+const nextCursorPosition = (isNearest, isStartingPosition) => {
     let tempDirect = 0;
     let newIndex = 0;
     const tempValPosIndex = lineStatus.valuePosIndex;
@@ -327,28 +329,82 @@ const nextCursorPosition = (isNearest) => {
 
     //check borders
     // in future will do mooving
-    moveCursor();
+    moveCursor(0, isStartingPosition);
 };
 
-const moveCursor = (curSize = 0) => {
+const moveCursor = (curSize = 0, isStartingPosition) => {
     let strxpx = "";
     let strypx = "";
     let strSize = "";
-    if (!curSize) {
-        cursorObj.xpx = gameObj.x0 + getCoord(cursorObj.xNew);
-        cursorObj.ypx = gameObj.y0 + getCoord(cursorObj.yNew);
+    let startPosition = 0;
+    let finishPosition = 0;
+    let distanceSquares = 0;
+    let isBorderOut = false;
 
-        strxpx = `${cursorObj.xpx}px`;
-        strypx = `${cursorObj.ypx}px`;
+    if (!curSize) {
+        cursorObj.xNewpx = gameObj.x0 + getCoord(cursorObj.xNew);
+        cursorObj.yNewpx = gameObj.y0 + getCoord(cursorObj.yNew);
+
+        strxpx = `${cursorObj.xNewpx}px`;
+        strypx = `${cursorObj.yNewpx}px`;
 
         strSize = `${cursorObj.size}px`;
+
+        if (cursorObj.isMovingAnimation && !isStartingPosition) {
+            if (cursorObj.ownerNumber) {
+                startPosition = cursorObj.ypx;
+                finishPosition = cursorObj.yNewpx;
+
+                isBorderOut = cursorObj.yBorderOut;
+                if (!isBorderOut) {
+                    distanceSquares = cursorObj.yNew - cursorObj.y;
+                } else {
+                    distanceSquares = 1;
+                }
+            } else {
+                startPosition = cursorObj.xpx;
+                finishPosition = cursorObj.xNewpx;
+
+                isBorderOut = cursorObj.xBorderOut;
+                if (!isBorderOut) {
+                    distanceSquares = cursorObj.xNew - cursorObj.x;
+                } else {
+                    distanceSquares = 1;
+                }
+            }
+
+            const movingSpeed = gameObj.cursorSpeed * distanceSquares; //speed and distance
+            const movingDistance = Math.abs(distanceSquares) * boxSize;
+            const curOutSize = isBorderOut ? cursorObj.size : 0;
+
+            console.log("distanceSquares " + distanceSquares);
+
+            tablePlayersHTML[0].playerName.textContent = cursorObj.xpx;
+            tablePlayersHTML[1].playerName.textContent = cursorObj.xpx;
+
+            movingAction(
+                cursorBox,
+                startPosition,
+                movingSpeed,
+                movingDistance,
+                cursorObj.ownerNumber,
+                finishPosition,
+                curOutSize
+            );
+        }
+
+        tablePlayersHTML[1].playerName.textContent = cursorObj.xpx;
+        tablePlayersHTML[1].playerScores.textContent = cursorObj.xpx;
 
         const currentColor = cursorColor[cursorObj.ownerNumber];
         cursorBox.style.borderColor = currentColor;
 
         cursorObj.x = cursorObj.xNew;
         cursorObj.y = cursorObj.yNew;
+        cursorObj.xpx = cursorObj.xNewpx;
+        cursorObj.ypx = cursorObj.yNewpx;
     } else {
+        // selection
         const selectionStep = Math.round((cursorObj.size - curSize) / 2);
         strxpx = `${cursorObj.xpx + selectionStep}px`;
         strypx = `${cursorObj.ypx + selectionStep}px`;
@@ -360,6 +416,77 @@ const moveCursor = (curSize = 0) => {
     cursorBox.style.top = strypx;
     cursorBox.style.height = strSize;
     cursorBox.style.width = strSize;
+};
+
+const animateTo = (
+    object,
+    position,
+    speed,
+    distance,
+    isVerticaly,
+    finishPosition,
+    curOutSize
+) => {
+    let way = 0;
+    let currentSize = curOutSize;
+
+    return new Promise((resolve) => {
+        const step = () => {
+            if (way < distance) {
+                position = position + speed; // speeed can be + or -
+                if (curOutSize) {
+                    if (currentSize > 5) {
+                        currentSize = currentSize - Math.abs(speed);
+                        object.style.width = String(currentSize) + "px";
+                        object.style.borderRightColor = "grey";
+                    } else {
+                        object.style.display = "none";
+                    }
+                }
+            } else {
+                position = finishPosition;
+            }
+            way = way + Math.abs(speed);
+
+            if (isVerticaly) {
+                object.style.top = `${position}px`;
+            } else {
+                object.style.left = `${position}px`;
+            }
+
+            if (way < distance) {
+                requestAnimationFrame(step);
+            } else {
+                resolve(); // Animation finished
+            }
+        };
+        requestAnimationFrame(step);
+    });
+};
+
+const movingAction = (
+    object,
+    activePosition,
+    speed,
+    distance,
+    isVerticaly,
+    finishPosition,
+    curOutSize
+) => {
+    if (distance) {
+        const move = async () => {
+            await animateTo(
+                object,
+                activePosition,
+                speed,
+                distance,
+                isVerticaly,
+                finishPosition,
+                curOutSize
+            );
+        };
+        move();
+    }
 };
 
 const getFieldelEmentValue = (fx, fy) => {
@@ -538,7 +665,7 @@ const createFieldLine = (isFirstTime) => {
                 cursorObj.yDirection = 0;
             }
         }
-        nextCursorPosition(true);
+        nextCursorPosition(true, false);
 
         return 0; //Game status paly
     } else {
@@ -641,7 +768,7 @@ const driverButonActivity = (isActive) => {
                     cursorObj.yDirection = gameObj.oponentComputer ? 0 : -1;
                 }
 
-                taskDone = nextCursorPosition(false);
+                taskDone = nextCursorPosition(false, false);
             }
         });
 
@@ -657,7 +784,7 @@ const driverButonActivity = (isActive) => {
                     cursorObj.yDirection = gameObj.oponentComputer ? 0 : 1;
                 }
 
-                taskDone = nextCursorPosition(false);
+                taskDone = nextCursorPosition(false, false);
             }
         });
 
@@ -796,7 +923,7 @@ const startGame = () => {
     cursorObj.xNew = getRandomValue(0, gameObj.fieldSize);
     cursorObj.yNew = getRandomValue(0, gameObj.fieldSize);
     taskDone = createFieldLine(true);
-    taskDone = nextCursorPosition(false);
+    taskDone = nextCursorPosition(false, true);
 
     taskDone = driverButonActivity(true);
 };
@@ -810,6 +937,7 @@ let boxSize = 0;
 let tempGameStatus = 0; //-1 lost, 0- paly, 1- win
 let iAnime = 0;
 let stopPosition = 0;
+let tempPosition = 0; // temporary cursor position
 
 let isMessage = false;
 let field = [];
@@ -827,6 +955,8 @@ let cursorObj = {
     fieldBoxSize: 0, //depend on field size
     xpx: 0, //pixels from left
     ypx: 0, //pixels from top
+    xNewpx: 0, //planing pixels from left
+    yNewpx: 0, //planing pixels from top
     ownerNumber: 0, //0-palyer (horozontal), 1- computer (vertical)
     xDirection: 0, //current direction -1 - left, 0- stop,  1 - right
     yDirection: 0, //current direction -1 - top,  0- stop, 1 - bottom
@@ -836,7 +966,9 @@ let cursorObj = {
         "yellow", //palyer cursor colour
         "red", //oponent cursor color
     ],
-    size: 0,
+    size: 0, // selection sizing
+    isMovingAnimation: true,
+    isSelectingAnimation: true,
 };
 
 cursorObj.xDirection = 0;
@@ -887,7 +1019,8 @@ const gameObj = {
     minCompMoveDelay: 200, //in miliseconds
     maxCompMoveDelay: 600, //in miliseconds
 
-    choosenCompPos: -1, // vetical position with cpmputer choose (max)
+    choosenCompPos: -1, // vetical position with computer choose (max)
+    cursorSpeed: 5,
 };
 
 // ******************************************************************************************
