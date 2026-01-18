@@ -454,7 +454,7 @@ const moveCursor = (curSize = 0, isStartingPosition) => {
 //     });
 // };
 
-const animateToOld = (
+const animateTo = (
     object,
     position,
     speed,
@@ -485,29 +485,6 @@ const animateToOld = (
             way = way + Math.abs(speed);
 
             if (isVertical) {
-                object.style.top = `${position}px`;
-            } else {
-                object.style.left = `${position}px`;
-            }
-
-            if (way < distance) {
-                requestAnimationFrame(step);
-            } else {
-                resolve(); // Animation finished
-            }
-        };
-        requestAnimationFrame(step);
-    });
-};
-
-const animateTo = (object, position, speed, distance, isVerticaly) => {
-    let way = 0;
-
-    return new Promise((resolve) => {
-        const step = () => {
-            way = way + Math.abs(speed);
-            position = position + speed; // speeed can be + or -
-            if (isVerticaly) {
                 object.style.top = `${position}px`;
             } else {
                 object.style.left = `${position}px`;

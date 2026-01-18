@@ -35,9 +35,7 @@ const animateTo = (object, position, speed, distance, isVerticaly) => {
     });
 };
 
-
-
-const moovingAction = (object, speed, distance, isVerticaly) => {
+const judam = (object, speed, distance, isVerticaly) => {
     const direct = Math.sign(speed);
     if (isVerticaly) {
         tempPosition = yPosition;
@@ -68,4 +66,3 @@ down.addEventListener("click", () => {
 right.addEventListener("click", () => {
     judam(adiv1, Math.abs(speed), distance, false);
 });
-
