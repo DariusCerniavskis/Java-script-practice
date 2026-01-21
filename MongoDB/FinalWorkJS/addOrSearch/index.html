@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link rel="stylesheet" href="./stylesAS.css" />
+    </head>
+    <body>
+        <div class="page-wrapper">
+            <header>
+                <div class="header-wrapper">
+                    <div class="logo">
+                        <h2>Adding real estate</h2>
+                        <div id="confirmation-wrapper">
+                            <h3 id="confirm-text">Are you sure?</h3>
+                            <div class="confirm-btn-wrapper">
+                                <button id="yes-button">YES</button>
+                                <button id="no-button">NO</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cancel-wrapper">
+                        <button id="cancelBtn">Cancel</button>
+                    </div>
+                </div>
+            </header>
+
+            <section>
+                <div class="AS-wrapper">
+                    <div class="nav-wrapper RE-type-wrapper">
+                        <h3>Type:</h3>
+                        <div class="input-btn-wrapper">
+                            <select
+                                class="input-Btn"
+                                name="types"
+                                id="type-combo-btn"
+                            ></select>
+                        </div>
+                    </div>
+
+                    <div class="nav-wrapper constr-year-wrapper">
+                        <h3>Built year:</h3>
+                        <div class="input-year-wrapper">
+                            <select
+                                class="year-combo-btn"
+                                id="built-year"
+                            ></select>
+                        </div>
+                    </div>
+
+                    <div class="nav-wrapper place-wrapper">
+                        <h3>Location:</h3>
+                        <div class="input-btn-wrapper">
+                            <select
+                                class="input-Btn"
+                                name="Kaunas"
+                                id="location-combo-btn"
+                            ></select>
+                        </div>
+                    </div>
+                    <div class="nav-wrapper price-wrapper">
+                        <h3>Price (€):</h3>
+                        <div class="input-btn-wrapper">
+                            <input
+                                class="input-Btn"
+                                type="number"
+                                id="input-price"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="nav-wrapper email-wrapper">
+                        <h3>Email:</h3>
+                        <div class="input-btn-wrapper">
+                            <input
+                                class="input-Btn"
+                                type="text"
+                                id="input-email"
+                            />
+                        </div>
+                    </div>
+                    <div class="nav-wrapper phone-wrapper">
+                        <h3>Phone:</h3>
+                        <div class="input-btn-wrapper">
+                            <input
+                                class="input-Btn"
+                                type="text"
+                                id="input-phone"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="nav-wrapper image-wrapper">
+                        <h3>Images URL:</h3>
+                        <div
+                            class="input-btn-wrapper"
+                            id="img-URL-wrapper"
+                        ></div>
+                    </div>
+
+                    <div class="register-btn-wrapper">
+                        <button id="register-btn">Register</button>
+                    </div>
+
+                    <div id="infoBox">informacija informacija</div>
+                </div>
+            </section>
+        </div>
+
+        <!-- <script src="./scriptAS.js"></script> -->
+        <script type="module" src="./scriptAS.js"></script>
+    </body>
+</html>

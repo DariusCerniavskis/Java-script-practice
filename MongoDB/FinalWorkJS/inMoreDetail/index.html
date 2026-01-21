@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link rel="stylesheet" href="stylesDetail.css" />
+    </head>
+    <body>
+        <div class="page-wrapper">
+            <div class="header-wrapper">
+                <h2>More detail</h2>
+                <div id="confirmation-wrapper">
+                    <h3 id="confirm-text">Are you sure?</h3>
+                    <div class="confirm-btn-wrapper">
+                        <button id="yes-button">YES</button>
+                        <button id="no-button">NO</button>
+                    </div>
+                </div>
+                <div class="del-nav-wrapper">
+                    <button id="tempDelete">Delete from list</button>
+                    <button id="restore">Restore</button>
+                    <button id="totalyDelete">Totaly Delete</button>
+                    <button id="exit">Exit</button>
+                </div>
+            </div>
+
+            <section>
+                <div class="estate-card-wrapper">
+                    <div class="img-wrapper">
+                        <img
+                            id="card-img"
+                            src=""
+                            alt="selected real estate object"
+                        />
+                    </div>
+
+                    <div class="data-wrapper">
+                        <div class="data-pair-wrapper1">
+                            <h3 class="type-name">Type:</h3>
+                            <h3 id="type"></h3>
+                        </div>
+
+                        <div class="data-pair-wrapper2">
+                            <h3 class="year-name">Built year:</h3>
+                            <h3 id="builtYear"></h3>
+                        </div>
+
+                        <div class="data-pair-wrapper1">
+                            <h3 class="location-name">Location:</h3>
+                            <h3 id="location"></h3>
+                        </div>
+
+                        <div class="data-pair-wrapper2">
+                            <h3 class="price-name">Price :</h3>
+                            <h3 id="price"></h3>
+                            <h3>€</h3>
+                        </div>
+
+                        <div class="data-pair-wrapper1">
+                            <h3 class="email-name">Email :</h3>
+                            <h3 id="email"></h3>
+                        </div>
+
+                        <div class="data-pair-wrapper2">
+                            <h3 class="phone-name">Phone :</h3>
+                            <h3 id="phone"></h3>
+                        </div>
+                    </div>
+                    <div id="infoBox">informacija informacija</div>
+                </div>
+            </section>
+        </div>
+
+        <script src="./scriptDetail.js"></script>
+        <!-- <script type="module" src="./scriptDetail.js"></script> -->
+    </body>
+</html>
