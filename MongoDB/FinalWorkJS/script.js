@@ -6,6 +6,8 @@ import {
 
 import { getArrayFetch } from "./utils/fetches.js";
 
+console.log("Startas")
+
 const tempDeletedWrapper = document.getElementById("temp-deleted");
 tempDeletedWrapper.style.display = "none";
 const deletedCheck = document.getElementById("check-deleted");

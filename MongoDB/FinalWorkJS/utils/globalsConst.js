@@ -1,5 +1,7 @@
 export const glDataArrayURL =
-    "https://695e14ac2556fd22f6773e58.mockapi.io/realEstates";
+    MONGO_DB_CONNECTION;
+
+console.log(MONGO_DB_CONNECTION)
 
 export const typesOfRETempl = ["flat", "homestead", "garden-house"];
 
