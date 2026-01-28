@@ -1,30 +1,87 @@
 import TicketModel from "../models/ticket.js";
 import { v4 as uuid } from "uuid";
+import {seachUserById} from "../controller/user.js"
 
-const titleValidation = (gotTtile) =>{
+const stringValidation = (gotString, messgeIfErr) =>{
     // answer is valid:
     // {anser, true} else {errorMessage, false}
  
-    if(!gotTtile){
+    if(!gotString){
         // empty
-        return { name: "No ticket title", isValid: false }; 
+        return { string: messgeIfErr, isValid: false }; 
 
     }
-    return {title:gotTtile,isValid:true}
+    return {string:gotString,isValid:true}
+}
+
+const priceValidation = (gotPrice) =>{
+    // answer is valid:
+    // {anser, true} else {errorMessage, false}
+
+    const resultObj=stringValidation(gotPrice,"No price")
+
+   if (!gotPrice) {
+        return { string: "No price", isValid: false };
+   }
+    if(isNaN( gotPrice)){
+        // empty
+        return { price: "Price is not a number", isValid: false }; 
+
+    }else if(gotPrice<=0){
+        // negative or zero
+        return { price: "Price should be positive number", isValid: false }; 
+
+    }else {
+       const price = (Math.round(gotPrice * 100) / 100).toFixed(2);
+    return {price:price,isValid:true}
+    }
+ 
 }
 
 
 // active
 export const addTicket = async (req, res) => {
-     
-    let resultObj = titleValidation(req.body.title);
+    let  resultObj={}
 
-    if (!resultObj[1]) {
-        return res.status(400).json({ message: resultObj[0] });
+    const user= seachUserById(res.params.userId)
+    if (!user){
+        return
     }
-    title=resultObj[0] 
     
-    
+    resultObj = stringValidation(req.body.title,"No title");
+
+    if (!resultObj.isValid) {
+        return res.status(400).json({ message: resultObjstring });
+    }
+    const title=resultObj.string 
+
+     resultObj = priceValidation(req.body.price);
+
+    if (!resultObj.isValid) {
+        return res.status(400).json({ message: resultObj.string });
+    }
+    const price=resultObj.string   
+  
+      resultObj = stringValidation(req.body.fromLocation,"The journey does not have a start location");
+
+    if (!resultObj.isValid) {
+        return res.status(400).json({ message: resultObj.string });
+    }
+    const fromLocation=resultObj.string 
+      
+    resultObj = stringValidation(req.body.toLocation,"The journey does not have a finish location");
+
+    if (!resultObj.isValid) {
+        return res.status(400).json({ message: resultObj.string });
+    }
+    const toLocation=resultObj.string 
+
+    resultObj = stringValidation(req.body.toLocationPhotUrl,"No journey finish lovation image");
+
+    if (!resultObj.isValid) {
+        return res.status(400).json({ message: resultObj.string });
+    }
+    const toLocationPhotUrl=resultObj.string 
 
     // title: { type: String, required: true },
 // price: { type: Number, required: true },

@@ -119,6 +119,18 @@ const createToken=(user,validTime)=>{
    
 }
 
+export const seachUserById = async (id) => {
+     const user = await UserModel.findOne({ id: id });
+
+    if (!user) {
+        return res.status(404).json({ message: `No user with id: ${id}` });
+
+    }
+
+    return  user ;
+};
+
+
 
 
 export const createNewUser = async (req, res) => {
@@ -242,8 +254,8 @@ export const newToken = (req, res) => {
 
 
 export const getUserById = async (req, res) => {
-    const id = req.params.id;
-    const user = await UserModel.findOne({ id: id });
+     const user = await seachUserById(req.params.id);
+    
 
     if (!user) {
         return res.status(404).json({ message: `No user with id: ${id}` });
