@@ -4,8 +4,6 @@ import bcrypt from "bcryptjs";
 import { v4 as uuid } from "uuid";
 import jwt from "jsonwebtoken";
 
-const addRefreshToken=true
-
 const doCapitalLetter = (word) => {
     const formatedWord = String(word).trim();
 
@@ -17,7 +15,6 @@ const doCapitalLetter = (word) => {
         return "";
     }
 };
-
 
 const userNameVlidatoion = (gotName) => {
     // answer is valid:
@@ -41,11 +38,14 @@ const userNameVlidatoion = (gotName) => {
             // too short
             return { name: "Bad user name (too short)", isValid: false };
         } else {
-            const formatedName =
-                doCapitalLetter(splittedName[0])
-            const formatedSurname= doCapitalLetter(splittedName[1]);
+            const formatedName = doCapitalLetter(splittedName[0]);
+            const formatedSurname = doCapitalLetter(splittedName[1]);
 
-            return { name: formatedName, isValid: true, surname: formatedSurname};
+            return {
+                name: formatedName,
+                isValid: true,
+                surname: formatedSurname,
+            };
         }
     }
 };
@@ -90,55 +90,50 @@ const passwordValidatoion = (gotPassword) => {
             return { email: "Weak password (too short)", isValid: false };
         } else if (password === password.toLowerCase) {
             // no upper
-            return { password: "Weak password (no uppercase letter)", isValid: false };
+            return {
+                password: "Weak password (no uppercase letter)",
+                isValid: false,
+            };
         } else if (password === password.toUpperCase) {
             // no lower
-            return { password: "Weak password (no lowercase letter)", isValid: false };
-        } else if (/\d/.test(password)){
-           // no digit
-           return { password: "Weak password (no digital)", isValid: false };
+            return {
+                password: "Weak password (no lowercase letter)",
+                isValid: false,
+            };
+        } else if (/\d/.test(password)) {
+            // no digit
+            return { password: "Weak password (no digital)", isValid: false };
         } else {
             // strong
             return { password: password, isValid: true };
         }
- 
     }
 };
 
-const createToken=(user,validTime)=>{
- 
-
+const createToken = (user, validTime) => {
     const newToken = jwt.sign(
         { email: user.email, userId: user.id },
         process.env.JWT_RANDOMISER,
         { expiresIn: validTime },
     );
- 
 
     return newToken;
-   
-}
-
-export const seachUserById = async (id) => {
-     const user = await UserModel.findOne({ id: id });
-
-    if (!user) {
-        return res.status(404).json({ message: `No user with id: ${id}` });
-
-    }
-
-    return  user ;
 };
 
+export const searchUserById = async (id) => {
+    const user = await UserModel.findOne({ id: id });
 
+    if (!user) {
+        return { errMessage: `No user with id: ${id}`, isValid: false };
+    }
 
+    return { user: user, isValid: true };
+};
 
 export const createNewUser = async (req, res) => {
-    const data = req.body;
-    let userName={}
-    let email=""
-    let password=""
-
+    let userName = {};
+    let email = "";
+    let password = "";
 
     // check validation
     let resultObj = userNameVlidatoion(req.body.name);
@@ -146,42 +141,39 @@ export const createNewUser = async (req, res) => {
     if (!resultObj[1]) {
         return res.status(400).json({ message: resultObj[0] });
     }
-    userName={name:resultObj[0],surname:resultObj[2]}
+    userName = { name: resultObj[0], surname: resultObj[2] };
 
     resultObj = emailValidatoion(req.body.email);
 
     if (!resultObj[1]) {
         return res.status(400).json({ message: resultObj[0] });
     }
-    email=resultObj[0]
+    email = resultObj[0];
 
     resultObj = passwordValidatoion(req.body.password);
 
     if (!resultObj[1]) {
         return res.status(400).json({ message: resultObj[0] });
     }
-    password=resultObj[0]
+    password = resultObj[0];
 
-    if (req.body.monyBalace<=0){
-        return res.status(400).json({message: "You do not have money"})
+    if (req.body.monyBalace <= 0) {
+        return res.status(400).json({ message: "You do not have money" });
     }
-
-
 
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
 
     const user = new UserModel({
         id: uuid(),
-        ...userName, 
-        
-        email:email,
+        ...userName,
+
+        email: email,
         password: hash,
         moneyBalance: req.body.monyBalace,
         Tickets: [],
     });
     await user.save();
-
 
     return res.status(201).json({ message: "New user created sucsesful" });
 };
@@ -193,75 +185,80 @@ export const login = async (req, res) => {
     const user = await UserModel.findOne({ email: email });
 
     if (!user) {
-        return res.status(404).json({ message: "Failed to login (bad email or password)" });
+        return res
+            .status(404)
+            .json({ message: "Failed to login (bad email or password)" });
     }
 
     //                                      got pass    db pass (hash)
     const isPasswordMatch = bcrypt.compareSync(password, user.password);
 
     if (!isPasswordMatch) {
-        return res.status(404).json({ message: "Failed to login (bad email or password)" });
+        return res
+            .status(404)
+            .json({ message: "Failed to login (bad email or password)" });
     }
 
+    const newJvtToken = createToken(user, "2h");
+    const newRefreshJvtToken = createToken(user, "24h");
 
-    const newJvtToken=createToken(user,"2h")
-    const newRefreshJvtToken=createToken(user,"24h")  
- 
-    return res.status(200).json({ message : "Login is sucsesful",
-    jvtToken:newJvtToken,jvtRefreshToken:newRefreshJvtToken});
+    return res.status(200).json({
+        message: "Login is sucsesful",
+        jvtToken: newJvtToken,
+        jvtRefreshToken: newRefreshJvtToken,
+    });
 };
 
 export const newToken = (req, res) => {
     const refreshToken = req.body.jvtRefreshToken;
-    const errMessage="Bad jvtToken refreshing"
-    const endErrMessage="please try again or login"
-  
+    const errMessage = "Bad jvtToken refreshing";
+    const endErrMessage = "please try again or login";
+
     if (!refreshToken) {
-      return res.status(400).json({ message: errMessage +"(no refresh token), " +endErrMessage});
+        return res.status(400).json({
+            message: errMessage + "(no refresh token), " + endErrMessage,
+        });
     }
-  
+
     jwt.verify(refreshToken, process.env.JWT_RANDOMISER, (error, decoded) => {
-      if (error) {
-        return res.status(400).json({ message: errMessage +"(bad refreshToken or expired), " +endErrMessage });
-      }
+        if (error) {
+            return res.status(400).json({
+                message:
+                    errMessage +
+                    "(bad refreshToken or expired), " +
+                    endErrMessage,
+            });
+        }
 
+        //   good refresh token
+        const newToken = createToken(decoded, "2h");
+
+        return res.status(200).json({
+            message: "Login is sucsesful",
+            jvtToken: newToken,
+            jvtRefreshToken: refreshToken,
+        });
     });
-  
-    //   good refresh token
-    const newToken=createToken(decoded,"2h")
+};
 
-    return res.status(200).json({ message : "Login is sucsesful",
-    jvtToken:newToken,jvtRefreshToken:refreshToken});
- 
-  };
-
-
-  export const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
     const users = await UserModel.find();
 
-    const sortedUsers= [...users].sort((a,b)=>{
-          return a.surname.localeCompare(b.surname); 
- 
-
+    const sortedUsers = [...users].sort((a, b) => {
+        return a.surname.localeCompare(b.surname);
     });
-
-
-
 
     return res.json({ users: sortedUsers });
 };
 
-
-
 export const getUserById = async (req, res) => {
-     const user = await seachUserById(req.params.id);
-    
+    const resultObj = await searchUserById(req.params.id);
 
-    if (!user) {
-        return res.status(404).json({ message: `No user with id: ${id}` });
+    if (!resultObj.isValid) {
+        return res.status(404).json({ message: resultObj.errMessage });
     }
 
-    return res.json({ user: user });
+    return res.json({ user: resultObj.user });
 };
 
 export const buyTicket = async (req, res) => {
@@ -271,8 +268,4 @@ export const buyTicket = async (req, res) => {
     if (!user) {
         return res.status(404).json({ message: `No user with id: ${id}` });
     }
-    
-
-    
-    
 };
