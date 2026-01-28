@@ -1,7 +1,10 @@
 import UserModel from "../models/user.js";
+
 import bcrypt from "bcryptjs";
 import { v4 as uuid } from "uuid";
 import jwt from "jsonwebtoken";
+
+const addRefreshToken=true
 
 const doCapitalLetter = (word) => {
     const formatedWord = String(word).trim();
@@ -14,6 +17,7 @@ const doCapitalLetter = (word) => {
         return "";
     }
 };
+
 
 const userNameVlidatoion = (gotName) => {
     // answer is valid:
@@ -37,11 +41,11 @@ const userNameVlidatoion = (gotName) => {
             // too short
             return { name: "Bad user name (too short)", isValid: false };
         } else {
-            const answer =
-                doCapitalLetter(splittedName[0]) +
-                " " +
-                doCapitalLetter(splittedName[1]);
-            return { name: answer, isValid: true };
+            const formatedName =
+                doCapitalLetter(splittedName[0])
+            const formatedSurname= doCapitalLetter(splittedName[1]);
+
+            return { name: formatedName, isValid: true, surname: formatedSurname};
         }
     }
 };
@@ -56,7 +60,7 @@ const emailValidatoion = (gotEmail) => {
     } else {
         const splittedEmail = String(gotEmail).trim().split("@");
         if (splittedEmail.length !== 2) {
-            // not Name Surname
+            // not @ or too many
             return { email: "Bad email (no @ or too many)", isValid: false };
         } else if (!splittedEmail[0].length || !splittedEmail[1].length) {
             // no name ar server
@@ -72,34 +76,102 @@ const emailValidatoion = (gotEmail) => {
     }
 };
 
+const passwordValidatoion = (gotPassword) => {
+    // answer is valid:
+    // {formatedName, true} else {errorMessage, false}
+
+    if (!gotPassword) {
+        // empty
+        return { password: "No password", isValid: false };
+    } else {
+        const password = String(gotPassword);
+        if (password.length < 6) {
+            // too short
+            return { email: "Weak password (too short)", isValid: false };
+        } else if (password === password.toLowerCase) {
+            // no upper
+            return { password: "Weak password (no uppercase letter)", isValid: false };
+        } else if (password === password.toUpperCase) {
+            // no lower
+            return { password: "Weak password (no lowercase letter)", isValid: false };
+        } else if (/\d/.test(password)){
+           // no digit
+           return { password: "Weak password (no digital)", isValid: false };
+        } else {
+            // strong
+            return { password: password, isValid: true };
+        }
+ 
+    }
+};
+
+const createToken=(user,validTime)=>{
+ 
+
+    const newToken = jwt.sign(
+        { email: user.email, userId: user.id },
+        process.env.JWT_RANDOMISER,
+        { expiresIn: validTime },
+    );
+ 
+
+    return newToken;
+   
+}
+
+
+
 export const createNewUser = async (req, res) => {
     const data = req.body;
+    let userName={}
+    let email=""
+    let password=""
+
 
     // check validation
     let resultObj = userNameVlidatoion(req.body.name);
 
     if (!resultObj[1]) {
-        return res.status(406).json({ message: resultObj[0] });
+        return res.status(400).json({ message: resultObj[0] });
     }
+    userName={name:resultObj[0],surname:resultObj[2]}
 
     resultObj = emailValidatoion(req.body.email);
 
     if (!resultObj[1]) {
-        return res.status(406).json({ message: resultObj[0] });
+        return res.status(400).json({ message: resultObj[0] });
+    }
+    email=resultObj[0]
+
+    resultObj = passwordValidatoion(req.body.password);
+
+    if (!resultObj[1]) {
+        return res.status(400).json({ message: resultObj[0] });
+    }
+    password=resultObj[0]
+
+    if (req.body.monyBalace<=0){
+        return res.status(400).json({message: "You do not have money"})
     }
 
+
+
     const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(data.password, salt);
+    const hash = bcrypt.hashSync(password, salt);
 
     const user = new UserModel({
         id: uuid(),
-        ...data,
+        ...userName, 
+        
+        email:email,
         password: hash,
+        moneyBalance: req.body.monyBalace,
         Tickets: [],
     });
     await user.save();
 
-    return res.status(201).json({ user: user });
+
+    return res.status(201).json({ message: "New user created sucsesful" });
 };
 
 export const login = async (req, res) => {
@@ -109,20 +181,86 @@ export const login = async (req, res) => {
     const user = await UserModel.findOne({ email: email });
 
     if (!user) {
-        return res.status(401).json({ message: "Bad email" });
+        return res.status(404).json({ message: "Failed to login (bad email or password)" });
     }
 
+    //                                      got pass    db pass (hash)
     const isPasswordMatch = bcrypt.compareSync(password, user.password);
 
     if (!isPasswordMatch) {
-        return res.status(401).json({ message: "Bad password" });
+        return res.status(404).json({ message: "Failed to login (bad email or password)" });
     }
 
-    const token = jwt.sign(
-        { email: user.email, userId: user.id },
-        process.env.JWT_RANDOMISER,
-        { expiresIn: "12h" },
-    );
 
-    return res.status(200).json({ jwt: token });
+    const newJvtToken=createToken(user,"2h")
+    const newRefreshJvtToken=createToken(user,"24h")  
+ 
+    return res.status(200).json({ message : "Login is sucsesful",
+    jvtToken:newJvtToken,jvtRefreshToken:newRefreshJvtToken});
+};
+
+export const newToken = (req, res) => {
+    const refreshToken = req.body.jvtRefreshToken;
+    const errMessage="Bad jvtToken refreshing"
+    const endErrMessage="please try again or login"
+  
+    if (!refreshToken) {
+      return res.status(400).json({ message: errMessage +"(no refresh token), " +endErrMessage});
+    }
+  
+    jwt.verify(refreshToken, process.env.JWT_RANDOMISER, (error, decoded) => {
+      if (error) {
+        return res.status(400).json({ message: errMessage +"(bad refreshToken or expired), " +endErrMessage });
+      }
+
+    });
+  
+    //   good refresh token
+    const newToken=createToken(decoded,"2h")
+
+    return res.status(200).json({ message : "Login is sucsesful",
+    jvtToken:newToken,jvtRefreshToken:refreshToken});
+ 
+  };
+
+
+  export const getAllUsers = async (req, res) => {
+    const users = await UserModel.find();
+
+    const sortedUsers= [...users].sort((a,b)=>{
+          return a.surname.localeCompare(b.surname); 
+ 
+
+    });
+
+
+
+
+    return res.json({ users: sortedUsers });
+};
+
+
+
+export const getUserById = async (req, res) => {
+    const id = req.params.id;
+    const user = await UserModel.findOne({ id: id });
+
+    if (!user) {
+        return res.status(404).json({ message: `No user with id: ${id}` });
+    }
+
+    return res.json({ user: user });
+};
+
+export const buyTicket = async (req, res) => {
+    const id = req.params.id;
+    const user = await UserModel.findOne({ id: id });
+
+    if (!user) {
+        return res.status(404).json({ message: `No user with id: ${id}` });
+    }
+    
+
+    
+    
 };

@@ -10,6 +10,8 @@ import {
 import auth from "../middleware/auth.js";
 
 const router = express.Router();
+// active
+router.post("/Tickets/:userId", auth, addTicket);
 
 router.get("/Tickets", auth, getAllTickets);
 
