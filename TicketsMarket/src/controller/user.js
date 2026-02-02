@@ -1,45 +1,42 @@
 import UserModel from "../models/user.js";
+import TicketModel from "../models/ticket.js";
 
 import bcrypt from "bcryptjs";
 import { v4 as uuid } from "uuid";
 import jwt from "jsonwebtoken";
 
-const doCapitalLetter = (word) => {
+export const doCapitalLetter = (word) => {
     const formatedWord = String(word).trim();
 
+    let answer = "";
+
     if (formatedWord.length > 1) {
-        return formatedWord[0].toUpperCase + formatedWord.slice(1).toLowerCase;
+        answer =
+            formatedWord[0].toUpperCase() + formatedWord.slice(1).toLowerCase();
     } else if (formatedWord.length == 1) {
-        return formatedWord[0].toUpperCase;
-    } else {
-        return "";
+        answer = formatedWord[0].toUpperCase();
     }
+
+    return answer;
 };
 
-const userNameVlidatoion = (gotName) => {
+const userNameVlidation = (gotName, gotSurname) => {
     // answer is valid:
     // {formatedName, true} else {errorMessage, false}
 
-    if (!gotName) {
+    if (!gotName || !gotSurname) {
         // empty
-        return { name: "No user name", isValid: false };
+        return { name: "No user name or surname", isValid: false };
     } else {
-        const splittedName = String(gotName).split(" ");
-        if (splittedName.length !== 2) {
-            // not Name Surname
-            return {
-                name: "Bad user name (NOT consist of name and surname)",
-                isValid: false,
-            };
-        } else if (!isNaN(splittedName[0]) || !isNaN(splittedName[1])) {
+        if (/\d/.test(gotName + gotSurname)) {
             // is number
             return { name: "Bad user name (has numbers)", isValid: false };
-        } else if (splittedName[0].length < 2 || splittedName[1].length < 2) {
+        } else if (gotName.length < 2 || gotSurname.length < 2) {
             // too short
             return { name: "Bad user name (too short)", isValid: false };
         } else {
-            const formatedName = doCapitalLetter(splittedName[0]);
-            const formatedSurname = doCapitalLetter(splittedName[1]);
+            const formatedName = doCapitalLetter(gotName);
+            const formatedSurname = doCapitalLetter(gotSurname);
 
             return {
                 name: formatedName,
@@ -50,7 +47,7 @@ const userNameVlidatoion = (gotName) => {
     }
 };
 
-const emailValidatoion = (gotEmail) => {
+const emailValidation = (gotEmail) => {
     // answer is valid:
     // {formatedName, true} else {errorMessage, false}
 
@@ -69,46 +66,89 @@ const emailValidatoion = (gotEmail) => {
             // no server dot
             return { email: "Bad email (bad server name)", isValid: false };
         } else {
-            const answer = (splittedEmail[0] + "@" + splittedEmail[1])
-                .toLowerCase;
-            return { email: answer, isValid: true };
+            const splittedServer = splittedEmail[1].split(".");
+
+            if (!splittedServer[0] || splittedServer[1].length < 2) {
+                return {
+                    email: "Bad email (too short server name or extention)",
+                    isValid: false,
+                };
+            } else {
+                const answer = (
+                    splittedEmail[0] +
+                    "@" +
+                    splittedEmail[1]
+                ).toLowerCase();
+                return { email: answer, isValid: true };
+            }
         }
     }
 };
 
-const passwordValidatoion = (gotPassword) => {
+const passwordValidation = (gotPassword, isNewUser) => {
     // answer is valid:
     // {formatedName, true} else {errorMessage, false}
+
+    let password = "";
 
     if (!gotPassword) {
         // empty
         return { password: "No password", isValid: false };
     } else {
-        const password = String(gotPassword);
-        if (password.length < 6) {
-            // too short
-            return { email: "Weak password (too short)", isValid: false };
-        } else if (password === password.toLowerCase) {
-            // no upper
-            return {
-                password: "Weak password (no uppercase letter)",
-                isValid: false,
-            };
-        } else if (password === password.toUpperCase) {
-            // no lower
-            return {
-                password: "Weak password (no lowercase letter)",
-                isValid: false,
-            };
-        } else if (/\d/.test(password)) {
-            // no digit
-            return { password: "Weak password (no digital)", isValid: false };
-        } else {
-            // strong
-            return { password: password, isValid: true };
+        password = String(gotPassword);
+
+        if (isNewUser) {
+            if (password.length < 6) {
+                // too short
+                return {
+                    password: "Weak password (too short)",
+                    isValid: false,
+                };
+            } else if (password === password.toLowerCase()) {
+                // no upper
+                return {
+                    password: "Weak password (no one upper case letter)",
+                    isValid: false,
+                };
+            } else if (password === password.toUpperCase()) {
+                // no lower
+                return {
+                    password: "Weak password (no one lower case letter)",
+                    isValid: false,
+                };
+            } else if (!/\d/.test(password)) {
+                // no digit
+                return {
+                    password: "Weak password (no digital)",
+                    isValid: false,
+                };
+            }
         }
     }
+    return { password: password, isValid: true };
 };
+
+export const moneyValidation = (gotMoney, errMessage) => {
+    // answer is valid:
+    // {formatedName, true} else {errorMessage, false}
+
+    const money = Number(gotMoney);
+
+    if (money > 0) {
+        // good
+        const formatedMoney = (Math.round(money * 100) / 100).toFixed(2);
+        return { money: formatedMoney, isValid: true };
+    } else {
+        // empty
+        return {
+            money: errMessage,
+            isValid: false,
+        };
+    }
+};
+
+// CREATE NEW TOKEN
+// ----------------------------------------------------------------
 
 const createToken = (user, validTime) => {
     const newToken = jwt.sign(
@@ -120,7 +160,12 @@ const createToken = (user, validTime) => {
     return newToken;
 };
 
+// -----------------------------------------------------------------
 export const searchUserById = async (id) => {
+    if (!id) {
+        return { errMessage: `No user ID`, isValid: false };
+    }
+
     const user = await UserModel.findOne({ id: id });
 
     if (!user) {
@@ -130,36 +175,40 @@ export const searchUserById = async (id) => {
     return { user: user, isValid: true };
 };
 
+// ------------------------------------------------------------------
 export const createNewUser = async (req, res) => {
-    let userName = {};
-    let email = "";
-    let password = "";
-
     // check validation
-    let resultObj = userNameVlidatoion(req.body.name);
+    let resultObj = userNameVlidation(req.body.name, req.body.surname);
 
-    if (!resultObj[1]) {
-        return res.status(400).json({ message: resultObj[0] });
+    if (!resultObj.isValid) {
+        return res.status(400).json({ message: resultObj.name });
     }
-    userName = { name: resultObj[0], surname: resultObj[2] };
 
-    resultObj = emailValidatoion(req.body.email);
+    const userName = { name: resultObj.name, surname: resultObj.surname };
 
-    if (!resultObj[1]) {
-        return res.status(400).json({ message: resultObj[0] });
+    resultObj = emailValidation(req.body.email);
+
+    if (!resultObj.isValid) {
+        return res.status(400).json({ message: resultObj.email });
     }
-    email = resultObj[0];
+    const email = resultObj.email;
 
-    resultObj = passwordValidatoion(req.body.password);
+    ((resultObj = passwordValidation(req.body.password)), false);
 
-    if (!resultObj[1]) {
-        return res.status(400).json({ message: resultObj[0] });
+    if (!resultObj.isValid) {
+        return res.status(400).json({ message: resultObj.password });
     }
-    password = resultObj[0];
+    const password = resultObj.password;
 
-    if (req.body.monyBalace <= 0) {
-        return res.status(400).json({ message: "You do not have money" });
+    resultObj = moneyValidation(
+        req.body.moneyBalance,
+        "Bad money balance or not money",
+    );
+    if (!resultObj.isValid) {
+        return res.status(400).json({ message: resultObj.money });
     }
+
+    const moneyBalance = resultObj.money;
 
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
@@ -170,24 +219,37 @@ export const createNewUser = async (req, res) => {
 
         email: email,
         password: hash,
-        moneyBalance: req.body.monyBalace,
-        Tickets: [],
+        moneyBalance: moneyBalance,
+        tickets: [],
     });
     await user.save();
 
     return res.status(201).json({ message: "New user created sucsesful" });
 };
 
+// ----------------------------------------------------------------------
 export const login = async (req, res) => {
-    const email = req.body.email;
-    const password = req.body.password;
+    let resultObj = {};
+
+    resultObj = emailValidation(req.body.email);
+    if (!resultObj.isValid) {
+        return res.status(400).json({ message: resultObj.email });
+    }
+    const email = resultObj.email;
+
+    resultObj = passwordValidation(req.body.password);
+
+    if (!resultObj.isValid) {
+        return res.status(400).json({ message: resultObj.password });
+    }
+    const password = resultObj.password;
 
     const user = await UserModel.findOne({ email: email });
 
     if (!user) {
         return res
             .status(404)
-            .json({ message: "Failed to login (bad email or password)" });
+            .json({ message: "1Failed to login (bad email or password)" });
     }
 
     //                                      got pass    db pass (hash)
@@ -196,7 +258,7 @@ export const login = async (req, res) => {
     if (!isPasswordMatch) {
         return res
             .status(404)
-            .json({ message: "Failed to login (bad email or password)" });
+            .json({ message: "2Failed to login (bad email or password)" });
     }
 
     const newJvtToken = createToken(user, "2h");
@@ -209,14 +271,18 @@ export const login = async (req, res) => {
     });
 };
 
+// -----------------------------------------------------------------
 export const newToken = (req, res) => {
-    const refreshToken = req.body.jvtRefreshToken;
+    let refreshToken = "";
+
     const errMessage = "Bad jvtToken refreshing";
     const endErrMessage = "please try again or login";
 
-    if (!refreshToken) {
+    try {
+        refreshToken = req.body.jvtRefreshToken;
+    } catch {
         return res.status(400).json({
-            message: errMessage + "(no refresh token), " + endErrMessage,
+            message: "No refresh token",
         });
     }
 
@@ -234,13 +300,14 @@ export const newToken = (req, res) => {
         const newToken = createToken(decoded, "2h");
 
         return res.status(200).json({
-            message: "Login is sucsesful",
+            message: "Token is updated sucsesful",
             jvtToken: newToken,
             jvtRefreshToken: refreshToken,
         });
     });
 };
 
+// ----------------------------------------------------------------
 export const getAllUsers = async (req, res) => {
     const users = await UserModel.find();
 
@@ -251,8 +318,9 @@ export const getAllUsers = async (req, res) => {
     return res.json({ users: sortedUsers });
 };
 
+// ----------------------------------------------------------------
 export const getUserById = async (req, res) => {
-    const resultObj = await searchUserById(req.params.id);
+    const resultObj = await searchUserById(req.body.userId);
 
     if (!resultObj.isValid) {
         return res.status(404).json({ message: resultObj.errMessage });
@@ -261,11 +329,61 @@ export const getUserById = async (req, res) => {
     return res.json({ user: resultObj.user });
 };
 
-export const buyTicket = async (req, res) => {
-    const id = req.params.id;
-    const user = await UserModel.findOne({ id: id });
+// ----------------------------------------------------------------
+export const addMoney = async (req, res) => {
+    let resultObj = {};
 
-    if (!user) {
-        return res.status(404).json({ message: `No user with id: ${id}` });
+    resultObj = await searchUserById(req.body.userId);
+
+    if (!resultObj.isValid) {
+        return res.status(404).json({ message: resultObj.errMessage });
     }
+
+    const user = resultObj.user;
+
+    resultObj = moneyValidation(req.body.addMoney, "Bad sum or no money");
+    if (!resultObj.isValid) {
+        return res.status(404).json({ message: resultObj.money });
+    }
+
+    const newBalance = +user.moneyBalance + +resultObj.money;
+
+    const updatedUser = await UserModel.findOneAndUpdate(
+        { id: user.id },
+        {
+            $set: { moneyBalance: newBalance },
+        },
+        { new: true }, // returns updated document
+    );
+
+    const showNewBAlance = {
+        name: updatedUser.name,
+        surname: updatedUser.surname,
+        moneyBalance: updatedUser.moneyBalance,
+    };
+
+    return res.status(201).json({ newBalance: showNewBAlance });
+};
+
+export const getAllUsersDetailed = async (req, res) => {
+    const users = await UserModel.find();
+
+    const sortedUsers = [...users].sort((a, b) => {
+        return a.surname.localeCompare(b.surname);
+    });
+
+    const tickets = await TicketModel.find();
+
+    const UsersAndTickets = [...sortedUsers].map((user) => {
+        const userTickets = [...tickets].reduce((acc, curr) => {
+            return curr.userId == user.id ? [...acc, curr] : acc;
+        }, []);
+
+        return {
+            user: user,
+            tickets: userTickets,
+        };
+    });
+
+    return res.json({ usersDetailed: UsersAndTickets });
 };

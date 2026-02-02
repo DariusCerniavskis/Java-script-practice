@@ -1,8 +1,15 @@
 import TicketModel from "../models/ticket.js";
+import UserModel from "../models/user.js";
 import { v4 as uuid } from "uuid";
-import { searchUserById } from "../controller/user.js";
+import {
+    searchUserById,
+    moneyValidation,
+    doCapitalLetter,
+} from "../controller/user.js";
 
-const stringValidation = (gotString, messgeIfErr) => {
+const hasCapitalLetter = true;
+
+const stringValidation = (gotString, messgeIfErr, isCapitalLetter) => {
     // answer is valid:
     // {anser, true} else {errorMessage, false}
 
@@ -10,58 +17,63 @@ const stringValidation = (gotString, messgeIfErr) => {
         // empty
         return { string: messgeIfErr, isValid: false };
     }
-    return { string: gotString, isValid: true };
+    const answer = isCapitalLetter ? doCapitalLetter(gotString) : gotString;
+    return { string: answer, isValid: true };
 };
 
-const priceValidation = (gotPrice) => {
-    // answer is valid:
-    // {anser, true} else {errorMessage, false}
+// const priceValidation = (gotPrice) => {
+//     // answer is valid:
+//     // {anser, true} else {errorMessage, false}
 
-    const resultObj = stringValidation(gotPrice, "No price");
+//     const resultObj = stringValidation(gotPrice, "No price");
 
-    if (!resultObj.isValid) {
-        return { string: "No price", isValid: false };
-    }
-    if (isNaN(gotPrice)) {
-        // empty
-        return { price: "Price is not a number", isValid: false };
-    } else if (gotPrice <= 0) {
-        // negative or zero
-        return { price: "Price should be positive number", isValid: false };
-    } else {
-        const price = (Math.round(gotPrice * 100) / 100).toFixed(2);
-        return { price: price, isValid: true };
-    }
-};
+//     if (!resultObj.isValid) {
+//         return { string: "No price", isValid: false };
+//     }
+//     if (isNaN(gotPrice)) {
+//         // empty
+//         return { price: "Price is not a number", isValid: false };
+//     } else if (gotPrice <= 0) {
+//         // negative or zero
+//         return { price: "Price should be positive number", isValid: false };
+//     } else {
+//         const price = (Math.round(gotPrice * 100) / 100).toFixed(2);
+//         return { price: price, isValid: true };
+//     }
+// };
 
 // active
 export const addTicket = async (req, res) => {
     let resultObj = {};
 
-    resultObj = searchUserById(res.params.userId);
+    resultObj = await searchUserById(req.body.userId);
+
     if (!resultObj.isValid) {
         // No user
+
         return res.status(404).json({ message: resultObj.errMessage });
     }
-    const userId = resultObj.user.id;
 
-    resultObj = stringValidation(req.body.title, "No title");
+    const user = resultObj.user;
+
+    resultObj = stringValidation(req.body.title, "No title", !hasCapitalLetter);
 
     if (!resultObj.isValid) {
         return res.status(400).json({ message: resultObj.string });
     }
     const title = resultObj.string;
 
-    resultObj = priceValidation(req.body.price);
+    resultObj = moneyValidation(req.body.price, "Bad ticket price or no price");
 
     if (!resultObj.isValid) {
-        return res.status(400).json({ message: resultObj.string });
+        return res.status(400).json({ message: resultObj.money });
     }
-    const price = resultObj.string;
+    const price = resultObj.money;
 
     resultObj = stringValidation(
         req.body.fromLocation,
         "The journey does not have a start location",
+        hasCapitalLetter,
     );
 
     if (!resultObj.isValid) {
@@ -72,6 +84,7 @@ export const addTicket = async (req, res) => {
     resultObj = stringValidation(
         req.body.toLocation,
         "The journey does not have a finish location",
+        hasCapitalLetter,
     );
 
     if (!resultObj.isValid) {
@@ -80,14 +93,24 @@ export const addTicket = async (req, res) => {
     const toLocation = resultObj.string;
 
     resultObj = stringValidation(
-        req.body.toLocationPhotUrl,
-        "No journey finish lovation image",
+        req.body.toLocationPhotoUrl,
+        "No journey finish location image",
+        !hasCapitalLetter,
     );
 
     if (!resultObj.isValid) {
         return res.status(400).json({ message: resultObj.string });
     }
-    const toLocationPhotUrl = resultObj.string;
+    const toLocationPhotoUrl = resultObj.string;
+
+    // Check money balanse after buy
+    if (price > user.moneyBalance) {
+        return res
+            .status(400)
+            .json({ message: "Not enough money to buy a ticket" });
+    }
+
+    const newBalance = user.moneyBalance - price;
 
     //    id: { type: String, required: true },
     // title: { type: String, required: true },
@@ -95,62 +118,67 @@ export const addTicket = async (req, res) => {
     // price: { type: Number, required: true },
     // fromLocation: { type: String, required: true },
     // toLocation: { type: String, required: true },
-    // toLocationPhotUrl: { type: String, required: true },
+    // toLocationPhotoUrl: { type: String, required: true },
 
-    const Ticket = new TicketModel({
+    const ticket = new TicketModel({
         id: uuid(),
         title: title,
-        userId: userId,
+        userId: user.id,
         price: price,
         fromLocation: fromLocation,
         toLocation: toLocation,
-        toLocationPhotUrl: toLocationPhotUrl,
+        toLocationPhotoUrl: toLocationPhotoUrl,
     });
-    await Ticket.save();
+    await ticket.save();
 
-    return res.status(201).json({ Ticket: Ticket });
+    // const updatedUser = await UserModel.findOneAndUpdate(
+    //     { id: id },
+    //     { ...req.body },
+    //     { new: true },
+    //   );
+
+    // update Uuser balance
+    const updatedUser = await UserModel.findOneAndUpdate(
+        { id: user.id },
+        {
+            $set: { moneyBalance: newBalance },
+            $push: { tickets: ticket.id },
+        },
+        { new: true }, // returns updated document
+    );
+
+    const showUserAfterBuying = {
+        name: updatedUser.name,
+        surname: updatedUser.surname,
+        moneyBalance: updatedUser.moneyBalance,
+        tckets: updatedUser.tickets,
+    };
+
+    return res
+        .status(201)
+        .json({ ticket: ticket, userAfterBuying: showUserAfterBuying });
 };
 
 export const getAllTickets = async (req, res) => {
-    const Tickets = await TicketModel.find();
+    const tickets = await TicketModel.find();
 
-    return res.json({ Tickets: Tickets });
+    return res.json({ tickets: tickets });
 };
 
-export const getTicketById = async (req, res) => {
-    const id = req.params.id;
-    const Ticket = await TicketModel.findOne({ id: id });
+export const getTicketByUserId = async (req, res) => {
+    const resultObj = await searchUserById(req.body.userId);
 
-    if (!Ticket) {
-        return res.status(404).json({ message: `No Ticket with id: ${id}` });
+    if (!resultObj.isValid) {
+        return res.status(404).json({ message: resultObj.errMessage });
     }
 
-    return res.json({ Ticket: Ticket });
-};
+    const user = resultObj.user;
 
-export const updateTicketById = async (req, res) => {
-    const id = req.params.id;
+    const tickets = await TicketModel.find();
 
-    const Ticket = await TicketModel.findOneAndUpdate(
-        { id: id },
-        { ...req.body },
-        { new: true },
-    );
+    const userTickets = [...tickets].filter((ticket) => {
+        return ticket.userId === user.id;
+    });
 
-    if (!Ticket) {
-        return res.status(404).json({ message: `No Ticket with id: ${id}` });
-    }
-
-    return res.status(200).json({ Ticket: Ticket });
-};
-
-export const deleteTicketById = async (req, res) => {
-    const id = req.params.id;
-    const Ticket = await TicketModel.findOneAndDelete({ id: id });
-
-    if (!Ticket) {
-        return res.status(404).json({ message: `No Ticket with id: ${id}` });
-    }
-
-    return res.status(200).json({ Ticket: Ticket });
+    return res.json({ activeUser: user, userTickets: userTickets });
 };

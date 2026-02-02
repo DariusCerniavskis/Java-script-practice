@@ -1,0 +1,55 @@
+
+.main {
+    max-width: 1500px;
+    margin-top: 3rem;
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.mainWrapper {
+    height: 800px;
+    background-image: url(../public/assets/img/mainBackground.jpg);
+
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.headerWrapper {
+    height: 6rem;
+    background-color: aqua;
+
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+}
+
+.logoWrapper {
+    height: 6rem;
+    background-color: bisque;
+}
+
+.logoWrapper img {
+    height: 100%;
+}
+
+.navWrapper ul {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 3rem;
+
+    list-style: none;
+}
+
+.eshopWrapper {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.eshopWrapper a img {
+    height: 2rem;
+}

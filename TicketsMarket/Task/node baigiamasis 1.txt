@@ -1,3 +1,7 @@
+Andrius@Andrijauskas.LT
+Andrius75+
+
+
 
 *Užduotis atliekama su node.js express framework;
 *Užduoties atlikimui galima rinktis sql arba nosql duombazę;

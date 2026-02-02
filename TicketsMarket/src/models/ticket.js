@@ -7,12 +7,10 @@ const schema = mongoose.Schema({
     price: { type: Number, required: true },
     fromLocation: { type: String, required: true },
     toLocation: { type: String, required: true },
-    toLocationPhotUrl: { type: String, required: true },
+    toLocationPhotoUrl: { type: String, required: true },
 });
 
 export default mongoose.model("Ticket", schema);
-
-
 
 // POSTMAN
 // create ticket
@@ -21,7 +19,7 @@ export default mongoose.model("Ticket", schema);
 // price: { type: Number, required: true },
 // fromLocation: { type: String, required: true },
 // toLocation: { type: String, required: true },
-// toLocationPhotUrl: { type: String, required: true },
+// toLocationPhotoUrl: { type: String, required: true },
 // }
 
 // parameters

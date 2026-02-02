@@ -2,10 +2,10 @@ import jwt from "jsonwebtoken";
 
 const authUser = (req, res, next) => {
     const token = req.headers.authorization;
-    const errorMessage="Bad authorisation, please try again or login"
+    const errorMessage = "Bad authorisation, please try again or login";
 
     if (!token) {
-        return res.status(401).json({ message: errorMessage });
+        return res.status(401).json({ message: "No token for authorisation" });
     }
 
     jwt.verify(token, process.env.JWT_RANDOMISER, (err, decoded) => {
