@@ -2,7 +2,12 @@
 const cursorBox = document.getElementById("cursorBox");
 // cursorBox.style.display = "none";
 const cursorBox2 = document.getElementById("cursorBox2");
-cursorBox2.style.display = "none";
+cursorBox2.style.left = "0px;";
+cursorBox2.style.top = "0px;";
+cursorBox2.style.width = "0px";
+cursorBox2.style.height = "0px";
+// cursorBox2.style.display = "none";
+
 const leftButton = document.getElementById("leftBtn");
 const rightButton = document.getElementById("rightBtn");
 const selectButton = document.getElementById("selectBtn");
@@ -416,91 +421,97 @@ const moveCursor = (curSize = 0, isStartingPosition) => {
 const animateTo = (
     object,
     object2,
-    position,
+    startPosition,
     speed,
     isVerticaly,
     finishPosition,
     isOverflow,
+    overflowStartPosition,
 ) => {
     let way = 0;
-    let currentSize = isOverflow ? cursorObj.fieldBoxSize : 0;
-    let position2 = position;
+    let currentSize = isOverflow ? cursorObj.size : 0;
+    let position = 0;
+    let position2 = 0;
+    let isLast = false;
 
     if (isOverflow) {
+        position = overflowStartPosition - gameObj.cursorBorder;
+        position2 = startPosition - gameObj.cursorBorder;
+        object2.style.borderColor = "yellow";
+
         if (isVerticaly) {
-            if (speed < 0) {
-                //  top
-                object.style.borderTopColor = "grey";
-                object2.style.borderBottomColor = "grey";
-            } else {
-                // Bottom
-                object.style.borderBottomColor = "grey";
-                object2.style.borderTopColor = "grey";
-            }
-            object2.style.height = "0px";
-            object2.style.width = String(cursorObj.fieldBoxSize) + "px";
-            object2.style.top = `${position2}px`;
+            object2.style.width = String(cursorObj.size) + "px";
+            object2.style.top = `${position}px`;
 
             object2.style.left = object.style.left;
         } else {
-            if (speed < 0) {
-                // left
-                object.style.borderLeftColor = "grey";
-                object2.style.borderRightColor = "grey";
-            } else {
-                object.style.borderRightColor = "grey";
-                object2.style.borderLeftColor = "grey";
-            }
-            object2.style.height = String(cursorObj.fieldBoxSize) + "px";
-            object2.style.width = "0px";
+            object2.style.height = String(cursorObj.size) + "px";
             object2.style.left = `${position2}px`;
 
             object2.style.top = object.style.top;
         }
-
-        object2.display = "flex";
+    } else {
+        position = startPosition;
     }
 
     return new Promise((resolve) => {
         const step = () => {
             if (way < cursorObj.fieldBoxSize) {
-                position = position + speed; // speeed can be + or -
                 if (isOverflow) {
-                    if (currentSize > 5) {
+                    if (currentSize > 1) {
                         currentSize = currentSize - Math.abs(speed);
-
                         if (isVerticaly) {
+                            if (speed < 0) {
+                                //  top
+                                object.style.borderTopColor = "grey";
+                                object2.style.borderBottomColor = "grey";
+                            } else {
+                                // Bottom
+                                object.style.borderBottomColor = "grey";
+                                object2.style.borderTopColor = "grey";
+                            }
                             object.style.height = String(currentSize) + "px";
-
                             object2.style.height =
-                                String(cursorObj.fieldBoxSize - currentSize) +
-                                "px";
+                                String(cursorObj.size - currentSize) + "px";
                         } else {
+                            if (speed < 0) {
+                                // left
+                                object.style.borderLeftColor = "grey";
+                                object2.style.borderRightColor = "grey";
+                            } else {
+                                object.style.borderRightColor = "grey";
+                                object2.style.borderLeftColor = "grey";
+                            }
                             object.style.width = String(currentSize) + "px";
-
                             object2.style.width =
-                                String(cursorObj.fieldBoxSize - currentSize) +
-                                "px";
+                                String(cursorObj.size - currentSize) + "px";
                         }
 
                         if (speed < 0) {
-                            // left or top
-                            position = 0;
+                            position2 = position2 + speed; // speeed can be + or -
+                        } else {
+                            position = position + speed; // speeed can be + or -
                         }
-                        position2 = position2 + speed; // speeed can be + or -
                     } else {
                         // Hide dublicate
-                        object2.style.display = "none";
+
                         position = finishPosition;
                         object.style.borderColor = "yellow";
                         if (isVerticaly) {
-                            object.style.height =
-                                String(cursorObj.fieldBoxSize) + "px";
+                            object.style.height = String(cursorObj.size) + "px";
                         } else {
-                            object.style.width =
-                                String(cursorObj.fieldBoxSize) + "px";
+                            object.style.width = String(cursorObj.size) + "px";
                         }
+                        object2.style.left = "10px;";
+                        object2.style.top = "10px;";
+                        object2.style.width = "0px";
+                        object2.style.height = "0px";
+                        object2.style.borderColor = "grey";
+                        isLast = true;
                     }
+                } else {
+                    // No overflow
+                    position = position + speed; // speeed can be + or -
                 }
             } else {
                 position = finishPosition;
@@ -513,13 +524,12 @@ const animateTo = (
                 object.style.left = `${position}px`;
             }
 
-            if (isOverflow) {
+            if (isOverflow && !isLast) {
                 if (isVerticaly) {
                     object2.style.top = `${position2}px`;
                 } else {
                     object2.style.left = `${position2}px`;
                 }
-                object2.display = "flex";
             }
 
             if (way <= cursorObj.fieldBoxSize) {
@@ -573,6 +583,8 @@ const movingLoop = (movingSpeed) => {
     let newPos = 0; // position where cursor will move
     let startPosition = 0;
     let pos0 = 0; //border correction
+    let overflowCurrPos = 0;
+    let overflowStartPosition = 0;
 
     if (isVertical) {
         currPos = cursorObj.y;
@@ -589,18 +601,21 @@ const movingLoop = (movingSpeed) => {
         isOverflow = currPos == 0;
         if (isOverflow) {
             currPos = gameObj.fieldSize;
+            overflowCurrPos = 0;
         }
     } else {
         // right
         isOverflow = currPos == gameObj.fieldSize - 1;
         if (isOverflow) {
             currPos = 0;
+            overflowCurrPos = gameObj.fieldSize;
         }
-        object2.display = "flex";
+        // object2.display = "none";
     }
     newPos = currPos + currDir;
     startPosition = pos0 + getCoord(currPos);
     finishPosition = pos0 + getCoord(newPos);
+    overflowStartPosition = pos0 + getCoord(overflowCurrPos);
 
     const move = async () => {
         await animateTo(
@@ -611,6 +626,7 @@ const movingLoop = (movingSpeed) => {
             isVertical,
             finishPosition,
             isOverflow,
+            overflowStartPosition,
         );
         // await animateTo(
         //     cursorBox,
@@ -626,70 +642,6 @@ const movingLoop = (movingSpeed) => {
     console.log(cursorBox);
     currPos = newPos;
 };
-
-// const movingLoop = (movingSpeed) => {
-//     let currPos = 0; //current cursor position
-//     let currDir = 0; //curent mooving direction
-//     let finishPos = lineStatus.valuesPositions[lineStatus.valuePosIndex];
-//     const isVertical = !!cursorObj.ownerNumber;
-//     let isOverflow = false; //true, when hide on one side and appear on another
-//     let newPos = 0; // position where cursor will move
-//     let startPosition = 0;
-//     let pos0 = 0; //border correction
-
-//     if (isVertical) {
-//         currPos = cursorObj.y;
-//         currDir = cursorObj.yDirection;
-//         pos0 = gameObj.y0;
-//     } else {
-//         currPos = cursorObj.x;
-//         currDir = cursorObj.xDirection;
-//         pos0 = gameObj.x0;
-//     }
-
-//     while (currPos !== finishPos || currDir) {
-//         if (currDir < 0) {
-//             // left
-//             isOverflow = currPos == 0;
-//             if (isOverflow) {
-//                 currPos = gameObj.fieldSize;
-//             }
-//         } else {
-//             // right
-//             isOverflow = currPos == gameObj.fieldSize - 1;
-//             if (isOverflow) {
-//                 currPos = 0;
-//             }
-//         }
-//         newPos = currPos + currDir;
-//         startPosition = pos0 + getCoord(currPos);
-//         finishPosition = pos0 + getCoord(newPos);
-
-//         const move = async () => {
-//             // await animateTo(
-//             //     cursorBox,
-//             //     cursorBox2,
-//             //     startPosition,
-//             //     movingSpeed,
-//             //     isVertical,
-//             //     finishPosition,
-//             //     isOverflow,
-//             // );
-//             await animateTo(
-//                 cursorBox,
-//                 startPosition,
-//                 movingSpeed,
-//                 100,
-//                 isVertical,
-//                 finishPosition,
-//                 100,
-//             );
-//         };
-//         move();
-
-//         currPos = newPos;
-//     }
-// };
 
 const getFieldelEmentValue = (fx, fy) => {
     if (
@@ -1038,7 +990,7 @@ const compTurnCounting = () => {
     return choosenPosition;
 };
 
-const computerTurn = (direction) => {
+const computerTurn = () => {
     const choosenPosition = compTurnCounting();
 
     cursorObj.choosenPosition = choosenPosition;
@@ -1127,12 +1079,8 @@ const startGame = () => {
 
     cursorObj.x = 0;
     cursorObj.y = cursorObj.yNew;
-    // cursorObj.xDirection = 1;
-    // cursorObj.isMoving = false;
 
     taskDone = createFieldLine(true);
-
-    // taskDone = movingLoop(cursorObj.xNew);
 
     taskDone = driverButonActivity(true);
 };
