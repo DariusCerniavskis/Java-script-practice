@@ -1,0 +1,11 @@
+1. naudoti api https://www.mmobomb.com/api1/games?platform=pc
+2. Pagrindiniam index puspapy naudojant axios atlikt duomenø parsiuntimà.
+3. Sukurti atitinkamus komponentus kaip Card, Wrapper.
+4. Sukurti Header komponentà á kurá turi bût pduodamas kaip prop masyvas su objektaiks. Objekte turi bût "link" bei "title"; Headerá linkai turi bût iðmapinti;
+5. Parfetchinti duomenys turi bût but perduoti kaip props wrapperiui, ten duomenys turi bût iðmapinti á skirtingas korteles;
+6. Kortelëje reikia atvaizduoti: title, description(5 þodþius ir ...), rate, count, image;
+7. Puslapio pradþioje sukurti paieðkos input. Jis turi filtruot visus products pagal title;
+8. Inspiracijos dizainui galit imti ið:
+https://www.pinterest.com/pin/144678206773706469/
+https://www.pinterest.com/pin/9429480465427358/
+https://www.pinterest.com/pin/504614333264995166/
