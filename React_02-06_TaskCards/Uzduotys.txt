@@ -1,0 +1,15 @@
+1. Sukurt Tasks wrapperį kuris atvaizduot task komponentus;
+2. Sukurti inputą kuris įrašo duomenis į useState kintamąjį;
+3. Pridėti mygtuką su "Add Task" užrašu;
+4. Paspaudus ant mygtuko naujo task'o kortelė turi būt pridėta prie ekrano. (" nepamiškit taip pat išvalyt inputo tekstą");
+5. Paspaudus ant task - jis turi būt ištrintas;
+6. Jeigų taskų masyvas yra tuščias - atvaizduoti informacinę žinutę;
+ 
+ 
+7. Uzinstaliuoti uuid biblioteką;
+8. Paspaudus ant tasko pridėjimo button'o - inputas turi būt ištrintas;
+9. Paspaudus ant task'o - jo state turi pasikeist, kartu ir kortelės spalva;
+10. Padaryt, kad padarytas task kortelės backgroundas būtu žalias, neatlikto tasko - raudonas
+11. Prodedamus taskus pridėti į localstorage;
+12. Perkranant puslapį taskai turi būt užkrauti iš localstorage;
+13. Užtikriti, kad localstorage bus atnaujinta kai task bus istrintas ar atnaujintas;

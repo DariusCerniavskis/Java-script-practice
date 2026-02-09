@@ -1,0 +1,18 @@
+1. Sukurti wireframe kuriame butu žaidimo misijų  bei  reward logiką;
+2. Aprasyši misijas bei išsaugoti į JS failą;
+3. Susikurti state bei atvaizduoti misijas;
+4. Atvaizduoti characterio kotelę bei pinigus kuriuos jis turi;
+5. Paspaudus ant misijos - characterio uždirbta pinigų suma turi padidėti reward kiekiu;
+6. Naudoti CSS kintamuosius pagrindinėms puslapio spalvoms;
+7. Atvaizduoti ekrane tik pirmas 5 misijas;
+8. Atlikus misiją - jos ekrane neturi matytis. Vietoj išnykusios misijos turi matytis sekanti neatlikta misija;
+ 
+9. Paspaudus ant misijos, jos statusas isCompleted turi pasikeisti į true;
+10. Sukurti atsirus state kiekvienai galimai character galiai;
+11. Apsirašyti super galios vaizdavimo komponentą;
+12. Apsirašyti super galios pirkimo mygtuką;
+13. Paspaudus ant pirkimo mygtuko super galios vienetas turi padidėti, pinigų kiekies sumažėti;
+14. Padaryti apsisaugojimo mechanizmą, kad vartotojas negalėtu nusipirkti super galio neturėdamas pakankamai pinigų;
+15. Sukurti funkciją kuriai yra paduodamas super galios title bei pinigų suma kiek galia kainuoja galia, funkcija yra atsakinga už visą pirkimo bei galios padidinimo logiką;
+16. Jei pinigų vartotojui nepakanka pirkimo metu, apačioje turi atsirasti raudonas užrašas informuojantis, kad pinigų nepakanka;
+17. Kuomet yra padaroma pakankamai misijų ir pinigų vėl užtenka bent vienam pirkimu - raudonas užrašas turi išnykt;
