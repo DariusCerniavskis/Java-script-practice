@@ -1,0 +1,21 @@
+.p-wrapper {
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+    border-top: 1px dashed black;
+}
+
+.p-wrapper p {
+    padding-top: 1rem;
+}
+
+.p-wrapper ul {
+    list-style: none;
+}
+
+.p-wrapper ul li {
+    padding-left: 1rem;
+}
+
+.p-wrapper ul {
+    padding-top: 1rem;
+}
