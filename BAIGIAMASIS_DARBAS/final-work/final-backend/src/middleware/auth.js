@@ -1,18 +1,23 @@
 import jwt from "jsonwebtoken";
 
-const authUser = (req, res, next) => {
+const auth = (req, res, next) => {
     console.log("Startassssssss");
 
     const authHeader = req.headers["authorization"];
 
-    console.log(authHeader);
     const errorMessage = "Bad authorisation, please try again or login";
 
     if (!authHeader) {
         return res.status(401).json({ message: "No token for authorisation" });
     }
 
-    const token = authHeader.split(" ")[1]; // Bearer <token>
+    const token = authHeader;
+    //    const token = authHeader.split(" ")[1]; // Bearer <token>
+
+    console.log("Header");
+    console.log(authHeader);
+    console.log("token");
+    console.log(token);
 
     jwt.verify(token, process.env.JWT_RANDOMISER, (err, decoded) => {
         if (err) {
@@ -26,4 +31,4 @@ const authUser = (req, res, next) => {
     });
 };
 
-export default authUser;
+export default auth;

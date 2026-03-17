@@ -27,8 +27,6 @@ const Index = () => {
             avatarUrl: avatarUrl,
         };
         let response;
-        console.log("new usaer DUO9MENYS:");
-        console.log(data);
 
         try {
             response = await registration(data);
@@ -64,16 +62,14 @@ const Index = () => {
     };
 
     const onNavLogout = async () => {};
-
-    console.log("Duomenys");
-    console.log(email);
+    const onNavAsk = async () => {};
 
     return (
         <PageTemplate
             userName={userName}
             isMounted={true}
             onNavNewUser={onFormNewUser}
-            onNavLogin={onFormLogin}
+            onNavAsk={onNavAsk}
             onNavLogout={onNavLogout}
         >
             <RegistrationForm

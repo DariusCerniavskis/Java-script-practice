@@ -39,13 +39,14 @@ const Index = () => {
     };
 
     const onNavLogout = async () => {};
+    const onNavAsk = async () => {};
 
     return (
         <PageTemplate
             userName={userName}
             isMounted={true}
             onNavNewUser={onFormNewUser}
-            onNavLogin={onFormLogin}
+            onNavAsk={onNavAsk}
             onNavLogout={onNavLogout}
         >
             <LoginForm

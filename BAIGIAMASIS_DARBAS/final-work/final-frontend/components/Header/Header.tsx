@@ -6,7 +6,7 @@ type HeaderProps = {
     userName: string;
     isMounted: boolean;
     onNavNewUser: () => void;
-    onNavLogin: () => void;
+    onNavAsk: () => void;
     onNavLogout: () => void;
 };
 
@@ -14,12 +14,9 @@ const Header = ({
     userName,
     isMounted,
     onNavNewUser,
-    onNavLogin,
+    onNavAsk,
     onNavLogout,
 }: HeaderProps) => {
-    console.log("Heder user name");
-    console.log(userName);
-
     return (
         <>
             <div className={styles["header-wrapper"]}>
@@ -34,7 +31,7 @@ const Header = ({
 
                 <div className={styles["title-group"]}>
                     <div>
-                        <h1>Viktorina: </h1>
+                        <h1>Forumas: </h1>
                     </div>
                     <div>
                         <h1>Ką žinai apie Lietuvos kariuomenę?</h1>
@@ -56,18 +53,21 @@ const Header = ({
                                                 Register
                                             </a>
                                         </li>
-                                        {/* <li>
-                                            <a href="#" onClick={onNavLogin}>
-                                                Login
-                                            </a>
-                                        </li> */}
                                     </>
                                 ) : (
-                                    <li>
-                                        <a href="#" onClick={onNavLogout}>
-                                            Logout
-                                        </a>
-                                    </li>
+                                    <>
+                                        <li>
+                                            <a href="#" onClick={onNavAsk}>
+                                                Ask question
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="#" onClick={onNavLogout}>
+                                                Logout
+                                            </a>
+                                        </li>
+                                    </>
                                 )}
                             </ul>
                         </nav>

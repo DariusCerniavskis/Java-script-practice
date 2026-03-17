@@ -1,11 +1,39 @@
 import mongoose from "mongoose";
 
 const schema = mongoose.Schema({
-    id: { type: String, required: true },
-    questionId: { type: String, required: true },
-    userId: { type: String, required: true },
-    answerNumber: { type: Number, required: true },
-    isCorrectAnswer: { type: Boolean, required: true },
+    answer_text: {
+        type: String,
+        required: true,
+    },
+
+    question_id: {
+        type: String,
+        ref: "Question",
+    },
+
+    user_id: {
+        type: String,
+        ref: "User",
+    },
+
+    date: {
+        type: Date,
+        default: Date.now,
+    },
+
+    likes: [
+        {
+            type: String,
+            ref: "User",
+        },
+    ],
+
+    dislikes: [
+        {
+            type: String,
+            ref: "User",
+        },
+    ],
 });
 
 export default mongoose.model("Answer", schema);

@@ -2,6 +2,8 @@ import "dotenv/config";
 import express from "express";
 
 import userRouter from "./src/router/user.js";
+import questionRouter from "./src/router/question.js";
+import answerRouter from "./src/router/answer.js";
 import mongoose from "mongoose";
 import "dotenv/config";
 import dns from "node:dns";
@@ -19,10 +21,7 @@ app.use(
     }),
 );
 
-console.log("frontendas portas " + frontendPort);
-
 mongoose
-
     .connect(process.env.MONGO_DB_CONNECTION)
     .then(() => console.log("Connected to DB"))
     .catch((err) => {
@@ -31,7 +30,9 @@ mongoose
 
 app.use(express.json());
 
-app.use(userRouter);
+app.use("/api/users", userRouter);
+app.use("/api/questions", questionRouter);
+app.use("/api/answers", answerRouter);
 
 app.use((req, res) => {
     res.status(404).json({ message: "This endpoint does not exist" });

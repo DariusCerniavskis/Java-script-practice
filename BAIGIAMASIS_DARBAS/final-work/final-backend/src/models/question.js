@@ -1,12 +1,20 @@
 import mongoose from "mongoose";
 
 const schema = mongoose.Schema({
-    id: { type: String, required: true },
-    number: { type: Number, required: true },
-    title: { type: String, required: true },
-    answers: { type: Array, required: true },
- 
+    questionText: {
+        type: String,
+        required: true,
+    },
+
+    userId: {
+        type: String,
+        ref: "User",
+    },
+
+    reatedAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 export default mongoose.model("Question", schema);
-

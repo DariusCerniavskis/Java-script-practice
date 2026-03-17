@@ -1,10 +1,29 @@
-import MainMenu from "@/components/MainMenu/MainMenu";
 import PageTemplate from "@/components/PageTemplate/PageTemplate";
 import cookie from "js-cookie";
 import { validateJwtToken } from "@/api/user";
 import { userNameKey } from "@/constants/api";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
+import QuestionList from "@/components/QuestionList/QuestionList";
+import { getQuestions, deleteQuestion } from "@/api/question";
+
+type Answer = {
+    _id: string;
+    answer_text: string;
+    user_id: string;
+    likes: string[]; // masyvas userId
+    dislikes: string[];
+    createdAt: string;
+};
+
+type Question = {
+    id: string;
+    questionText: string;
+    userId: string;
+    createdAt: string;
+    answers?: Answer[];
+};
 
 const Index = () => {
     const router = useRouter();
@@ -14,26 +33,29 @@ const Index = () => {
     );
 
     const [isMounted, setIsMounted] = useState(false);
+    const [questions, setQuestions] = useState<Question[]>([]);
 
     const validateJwt = async () => {
         try {
             const response = await validateJwtToken();
+            router.push("/");
+            return;
+            console.log("VALIDATION");
+            console.log(response);
 
-            if (response.status === 200) {
-                console.log("validate Response   good    username");
-                console.log(userName);
-
+            if (response.status === 201) {
                 router.push("/");
                 return;
             }
         } catch (err) {
-            console.log("validate Response   bad");
             console.log(err);
         }
         userLogout();
     };
 
-    const onFormLogin = async () => {};
+    const onNavAsk = async () => {
+        router.push("/ask");
+    };
 
     const onFormNewUser = async () => {};
 
@@ -43,23 +65,38 @@ const Index = () => {
         router.push("/login");
     };
 
-    useEffect(() => {
-        setIsMounted(true);
-        validateJwt();
-    }, []);
+    const loadQuestions = async () => {
+        const data = await getQuestions();
+        setQuestions(data?.data);
+    };
 
-    console.log("main user name");
-    console.log(userName);
+    const onClickQuestion = async () => {};
+
+    const onClickRemoveQuestion = async (id: string) => {
+        await deleteQuestion(id);
+        loadQuestions();
+    };
+
+    useEffect(() => {
+        validateJwt();
+        setIsMounted(true);
+
+        loadQuestions();
+    }, []);
 
     return (
         <PageTemplate
             userName={userName}
             isMounted={isMounted}
             onNavNewUser={onFormNewUser}
-            onNavLogin={onFormLogin}
+            onNavAsk={onNavAsk}
             onNavLogout={userLogout}
         >
-            <MainMenu />
+            <QuestionList
+                question={questions}
+                onClickQuestion={onClickQuestion}
+                onClickRemoveQuestion={onClickRemoveQuestion}
+            />
         </PageTemplate>
     );
 };

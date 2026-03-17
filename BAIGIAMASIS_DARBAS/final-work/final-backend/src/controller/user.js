@@ -162,13 +162,8 @@ export const searchUserById = async (id) => {
 };
 
 // ------------------------------------------------------------------
-export const createNewUser = async (req, res) => {
+export const register = async (req, res) => {
     // check validation
-    console.log(
-        "************************************************************************",
-    );
-    console.log("New user check   start:");
-    console.log(req.body);
 
     let resultObj = userNameValidation(req.body.userName);
 
@@ -180,13 +175,10 @@ export const createNewUser = async (req, res) => {
 
     resultObj = emailValidation(req.body.email);
 
-    console.log("New user email:");
-    console.log(resultObj);
-
     if (!resultObj.isValid) {
         return res.status(400).json({ message: resultObj.email });
     }
-    console.log("New user check   name:");
+
     const email = resultObj.email;
 
     ((resultObj = passwordValidation(req.body.password)), false);
@@ -194,11 +186,8 @@ export const createNewUser = async (req, res) => {
     if (!resultObj.isValid) {
         return res.status(400).json({ message: resultObj.password });
     }
-    console.log("New user check   pass:");
-    const password = resultObj.password;
 
-    console.log("New user check   end:");
-    console.log(req.body);
+    const password = resultObj.password;
 
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);

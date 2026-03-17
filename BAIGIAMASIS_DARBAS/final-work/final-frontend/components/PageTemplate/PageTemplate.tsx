@@ -7,7 +7,7 @@ type PageTemplateProps = {
     userName: string;
     isMounted: boolean;
     onNavNewUser: () => void;
-    onNavLogin: () => void;
+    onNavAsk: () => void;
     onNavLogout: () => void;
 
     children: React.ReactNode;
@@ -17,7 +17,7 @@ const PageTemplate = ({
     userName,
     isMounted,
     onNavNewUser,
-    onNavLogin,
+    onNavAsk,
     onNavLogout,
     children,
 }: PageTemplateProps) => {
@@ -30,7 +30,7 @@ const PageTemplate = ({
                 userName={userName}
                 isMounted={isMounted}
                 onNavNewUser={onNavNewUser}
-                onNavLogin={onNavLogin}
+                onNavAsk={onNavAsk}
                 onNavLogout={onNavLogout}
             />
             <div className={styles.content}>{children}</div>
