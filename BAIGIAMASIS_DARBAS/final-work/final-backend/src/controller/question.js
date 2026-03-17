@@ -2,9 +2,9 @@ import QuestionModel from "../models/question.js";
 import { v4 as uuid } from "uuid";
 
 export const addQuestion = async (req, res) => {
-    const { question_text, userId } = req.body;
+    const { questionText, userId } = req.body;
 
-    if (!question_text) {
+    if (!questionText) {
         return res.status(400).json({
             message: "Question text is required",
         });
@@ -12,8 +12,8 @@ export const addQuestion = async (req, res) => {
 
     const question = new QuestionModel({
         id: uuid(),
-        question_text: question_text,
-        user_id: userId,
+        questionText: questionText,
+        userId: userId,
     });
 
     await question.save();

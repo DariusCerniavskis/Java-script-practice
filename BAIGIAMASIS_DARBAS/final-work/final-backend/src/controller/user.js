@@ -171,7 +171,7 @@ export const register = async (req, res) => {
         return res.status(400).json({ message: resultObj.name });
     }
 
-    const newName = resultObj.userName;
+    const newName = resultObj.name;
 
     resultObj = emailValidation(req.body.email);
 
@@ -190,25 +190,28 @@ export const register = async (req, res) => {
     const password = resultObj.password;
 
     const salt = bcrypt.genSaltSync(10);
+
     const hash = bcrypt.hashSync(password, salt);
 
     const user = new UserModel({
         id: uuid(),
-        userName: newName,
+        name: newName,
 
         email: email,
-        avatar: req.body.avatar,
+        avatar: req.body.avatarUrl,
         password: hash,
-        quizDate: "",
-        quizTime: "",
-        lastAnswered: 0,
-        isAdmin: false,
-        rating: 0,
     });
+
     await user.save();
+
+    console.log("Registracija6:");
+    console.log(user);
 
     const newJwtToken = createToken(user, "2h");
     const newRefreshJwtToken = createToken(user, "24h");
+
+    console.log("Registracija7:");
+    console.log(user);
 
     return res.status(201).json({
         message: "New user created sucsesful",
